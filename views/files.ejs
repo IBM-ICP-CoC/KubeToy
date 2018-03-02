@@ -1,0 +1,57 @@
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+	<link rel="icon" type="image/png" href="images/duck.png">
+
+	<title>Kubetoy Filesystem</title>
+</head>
+
+<body>
+<div class="container">
+
+<h1>Filesystem</h1>
+
+	<p><a href="home">home</a> | <a href="files">filesystem</a> | <a href="about.html">about</a></p>
+
+
+	<form method="POST" action="files">
+	  <div class="form-group">
+	    <label for="filename">Filename</label>
+	    <input type="text" class="form-control" name="filename" id="filename" aria-describedby="filenameHelp" placeholder="Filename">
+	    <small id="filenameHelp" class="form-text text-muted">A text type of extension (eg. .txt) is suggested to enable browser viewing.</small>
+	  </div>
+	  <div class="form-group">
+	    <label for="content">File contents</label>
+	    <textarea class="form-control" name="content" id="content" rows="3"></textarea>
+	  </div>
+	  <button type="submit" class="btn btn-primary">Create file</button>
+	
+	</form>
+	
+	<div class="container">
+	<h4>Existing files</h4>
+	<ul class="list-group">
+	
+	<%
+		for(var i=0;i<items.length;i++) {
+	%>
+	  <li class="list-group-item"><a href="show?f=<%=i%>"><%= items[i] %></a></li>
+	<% } %>
+	</ul>
+	
+	</div>
+</div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+
+</body>
+</html>

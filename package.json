@@ -1,0 +1,16 @@
+{
+	"name": "helloicp",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"start": "node app.js"
+	},
+	"dependencies": {
+		"express": "4.15.x",
+		"body-parser": "1.18.*",
+		"ejs": "^2.5.x",
+		"valid-filename": "*",
+		"filename-reserved-regex": "*"
+	},
+	"repository": {}
+}

@@ -1,0 +1,12 @@
+# Default values for kubetoy.
+replicaCount: 3
+image:
+  repository: jconallen/kubetoy
+  pullPolicy: IfNotPresent
+service:
+  name: kubetoy-service
+  type: NodePort
+  externalPort: 80
+storage:
+  pvc: kubetoy-pvc
+  accessmode: ReadWriteMany
