@@ -5,8 +5,7 @@ image:
   pullPolicy: IfNotPresent
 service:
   name: kubetoy-service
-  type: NodePort
-  externalPort: 80
+  type: LoadBalancer
 storage:
   pvc: kubetoy-pvc
   accessmode: ReadWriteMany
