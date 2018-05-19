@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="icon" type="image/png" href="images/duck.png">
  
 	<title>About Kubetoy</title>
@@ -15,15 +14,16 @@
 
 <div class="container">
 	
-	<h1>About Kubetoy 0.3.0</h1>
+	<h1>About Kubetoy 1.1.0</h1>
 	
 	<p>This application is a simple Node.js application that is expected to run in a
 	container deployed by kubernetes.  It was created to help explore IBM Cloud Private
 	by allowing the user to write messages to the log, crash the application, and even
 	create and view files in a shared file system.</p>
 	
-	<p>This app uses Bootstrap 4, and it is expected that the browser will have access to the content delivery
-	network versions of the CSS and JavaScript files.</p>
+	<p>This app uses Bootstrap 4.  All the files have been copied locally to this
+	application so Internet connectivity is not required and can work in 
+	an air-gapped system.</p>
 	
 	<p>The app was written by jim conallen (jconallen@us.ibm.com) and is made available under
 	the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 license</a>.</p>
@@ -34,9 +34,9 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
-
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
 </body>
 </html>
