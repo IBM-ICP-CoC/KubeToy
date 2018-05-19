@@ -140,7 +140,7 @@ app.get('/home',
 
 app.get('/version', function(req,res){
 	res.status(200);
-	res.send("1.0.0");
+	res.send("1.1.0");
 });
 
 app.get('/',  

@@ -1,4 +1,4 @@
-FROM mhart/alpine-node
+FROM node:8.11.2-alpine
 
 CMD mkdir /app
 WORKDIR /app
