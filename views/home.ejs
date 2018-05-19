@@ -29,7 +29,10 @@
 	  <hr class="my-4">
 	  <p>Currently being served up by pod: <%=pod%> </p>
 	</div>
-	<p><a href="home">home</a> | <a href="files">filesystem</a> | <a href="about.html">about</a></p>
+	
+<p><a href="home">home</a> | 
+<% if( filesystem ) { %><a href="files">filesystem</a> | <% } %>
+<a href="about.html">about</a></p>
 	
 	<div class="input-group mb-3">
 		<form class="form-inline" method="GET" action="logit">

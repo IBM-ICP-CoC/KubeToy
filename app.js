@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const validFilename = require('valid-filename');
 const fs = require('fs');
 
+const appVersion = "1.2.0";
+
 var app = express();
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({
@@ -32,56 +34,63 @@ function healthStatus(){
 
 var directory = '/var/test';
 
+var filesystem = fs.existsSync(directory);
+
 app.set('port', process.env.PORT || 3000);
 
-app.get('/files', function(req,res){
-	fs.readdir(directory, function(err, items) {
-		if( err ) {
-			var pretty = JSON.stringify(err,null,4);
-			  console.error(pretty);
-			  res.render('error', { "pod": pod, "msg": pretty });
-		} else {
-			if( !items ) {
-				items = [];
-			}
-			res.render('files', { "pod": pod, "items": items, "directory": directory });
-		}
-	});
-});
-
-app.get('/show', function(req,res){
-	var index = req.query.f;
-	fs.readdir(directory, function(err, items) {
-	    if( index<items.length ) {
-	    		res.sendFile( '/var/test/' + items[index] );
-	    } else {
-	    		res.redirect('files');
-	    }
-	});
-});
-
-app.post('/files', function(req,res){
-	var filename = req.body.filename;
-	if( validFilename( filename ) ){
-		var content = req.body.content;
-		console.log( 'creating file: ' + filename );
-		
-		fs.writeFile(directory + '/' + filename, content, 'utf8', function (err) {
-			  if (err) {
-				  var pretty = JSON.stringify(err,null,4);
+if( filesystem ) {
+	app.get('/files', function(req,res){
+		fs.readdir(directory, function(err, items) {
+			if( err ) {
+				var pretty = JSON.stringify(err,null,4);
 				  console.error(pretty);
 				  res.render('error', { "pod": pod, "msg": pretty });
-			  } else{
-				  res.redirect('files');
-			  }
-		}); 
-	} else {
-		var pretty ='Invalid filename: "' + filename + '"';
-		console.error(pretty);
-		res.render('error', { "pod": pod, "msg": pretty });
-	}
+			} else {
+				if( !items ) {
+					items = [];
+				}
+				res.render('files', { "pod": pod, "items": items, "directory": directory });
+			}
+		});
+	});
+
+	app.get('/show', function(req,res){
+		var index = req.query.f;
+		fs.readdir(directory, function(err, items) {
+		    if( index<items.length ) {
+		    		res.sendFile( '/var/test/' + items[index] );
+		    } else {
+		    		res.redirect('files');
+		    }
+		});
+	});
 	
-});
+	
+	app.post('/files', function(req,res){
+		var filename = req.body.filename;
+		if( validFilename( filename ) ){
+			var content = req.body.content;
+			console.log( 'creating file: ' + filename );
+			
+			fs.writeFile(directory + '/' + filename, content, 'utf8', function (err) {
+				  if (err) {
+					  var pretty = JSON.stringify(err,null,4);
+					  console.error(pretty);
+					  res.render('error', { "pod": pod, "msg": pretty });
+				  } else{
+					  res.redirect('files');
+				  }
+			}); 
+		} else {
+			var pretty ='Invalid filename: "' + filename + '"';
+			console.error(pretty);
+			res.render('error', { "pod": pod, "msg": pretty });
+		}
+		
+	});
+
+}
+
 
 app.get('/logit', function(req,res){
 	var msg = req.query.msg;
@@ -134,13 +143,13 @@ app.post('/health', function(req,res){
 app.get('/home',  
 	function(req, res) {
 		var status = healthStatus();
-		res.render('home', {"pretty": prettyEnv, "pod": pod, "healthStatus": status });
+		res.render('home', {"pretty": prettyEnv, "pod": pod, "healthStatus": status, "filesystem": filesystem });
 	}
 );
 
 app.get('/version', function(req,res){
 	res.status(200);
-	res.send("1.1.0");
+	res.send(appVersion);
 });
 
 app.get('/',  
