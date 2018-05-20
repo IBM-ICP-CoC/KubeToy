@@ -136,7 +136,7 @@ app.get('/health', function(req,res){
 app.post('/health', function(req,res){
 	healthy = !healthy;
 	var status = healthStatus();
-	console.log(pod + ':' + status);
+	console.log(pod + ': ' + status);
 	res.redirect('home');
 });
 
@@ -148,8 +148,7 @@ app.get('/home',
 );
 
 app.get('/version', function(req,res){
-	res.status(200);
-	res.send(appVersion);
+	res.status(200).send(appVersion);
 });
 
 app.get('/',  
