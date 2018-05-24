@@ -157,7 +157,7 @@ app.get('/config',
 		}
 		var prettyEnv = JSON.stringify(process.env,null,4);
 		
-		res.render('config', {"pretty": prettyEnv, "filesystem": filesystem, "config": config, "secret": secret });
+		res.render('config', {"pod": pod, "pretty": prettyEnv, "filesystem": filesystem, "config": config, "secret": secret });
 	}
 );
 
