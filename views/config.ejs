@@ -1,0 +1,122 @@
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="icon" type="image/png" href="images/duck.png">
+
+	<title>Kubetoy ConfigMaps and Secrets</title>
+    <script type="text/javascript">
+        function encode() {
+            input = document.getElementById ("input");
+            data = window.btoa (input.value);
+            result = document.getElementById("result");
+            result.value = data;
+        }
+        function decode() {
+            input = document.getElementById ("input");
+            data = window.atob (input.value);
+            result = document.getElementById("result");
+            result.value = data;
+        }
+    </script>
+</head>
+
+<body>
+<div class="container">
+
+<h1>ConfigMaps and Secrets</h1>
+
+<p><a href="home">home</a> | 
+<% if( filesystem ) { %><a href="files">filesystem</a> | <% } %>
+<a href="config">config maps and secrets</a> | <a href="about.html">about</a></p>
+	
+	<div class="card" style="width: 18rem; display:inline-block;">
+	  <div class="card-body">
+	    <h5 class="card-title">Config.json file</h5>
+<pre>
+<%=config %>
+</pre>
+<hr/>
+<h5 class="card-title">Kubernetes resource</h5>
+<pre>
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: filetoyconfigmap
+data:
+  toy-config: { "default": "123" }
+  
+</pre>
+	  </div>
+	</div>
+	
+	<div class="card align-top" style="width: 18rem; display:inline-block; ">
+	  <div class="card-body">
+	    <h5 class="card-title">MySecret file (decoded)</h5>
+<pre>
+<%=secret %>
+</pre>
+<hr/>
+<h5 class="card-title">Kubernetes resource</h5>
+<pre>
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kubetoy-secret-files
+type: Opaque
+data:
+  toy-secret: U2hoLi4uIFRoaXMgaXMgYSBzZWNyZXQu
+  
+</pre>
+	  </div>
+	</div>
+	
+	<p></p>
+
+	<div class="card align-top" style="width: 24rem; ">
+	  <div class="card-body">
+	    <h5 class="card-title">Base64 Encoder/Decoder</h5>
+		    <label for="input" >Input</label>
+		    <input type="text" class="form-control" id="input" placeholder="a string value">
+		    <label for="result" >Result</label>
+		    <input type="text" readonly class="form-control" name="result" id="result" value="">
+		    <p></p>
+		    <button class="btn btn-primary btn-sm" onclick="encode();">Encode</button> &nbsp;
+		    <button class="btn btn-primary btn-sm" onclick="decode();">Decode</button>
+	  </div>
+	</div>
+
+	
+	<div id="accordion" role="tablist">
+	  <div class="card">
+	    <div class="card-header" role="tab" id="headingOne">
+	      <h5 class="mb-0">
+	        <a data-toggle="collapse" href="#collapseOne" role="button" aria-expanded="true" aria-controls="collapseOne">
+	          Environment variables passed to pod
+	        </a>
+	      </h5>
+	    </div>
+	
+	    <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
+	      <div class="card-body">
+			<pre><%=pretty%></pre>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+	
+	
+</div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</body>
+</html>

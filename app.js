@@ -3,7 +3,10 @@ const bodyParser = require('body-parser');
 const validFilename = require('valid-filename');
 const fs = require('fs');
 
-const appVersion = "1.2.0";
+const appVersion = "1.3.0";
+
+const configFile = "/var/config/config-file";
+const secretFile = "/var/secret/toy-secret";
 
 var app = express();
 app.use(express.static(__dirname + '/public'));
@@ -14,7 +17,7 @@ app.use(bodyParser.urlencoded({
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
-var prettyEnv = JSON.stringify(process.env,null,4);
+
 var pod = "xxxxx";
 if( process.env.HOSTNAME ) {
 	var hostname = process.env.HOSTNAME;
@@ -140,10 +143,29 @@ app.post('/health', function(req,res){
 	res.redirect('home');
 });
 
+app.get('/config',  
+	function(req, res) {
+		var config = "(file missing)";
+		var secret = "(file missing)";
+		
+		console.log(fs.existsSync(configFile));
+		if( fs.existsSync(configFile) ) {
+			config = fs.readFileSync(configFile);
+		}
+		if( fs.existsSync(secretFile) ) {
+			secret = fs.readFileSync(secretFile);
+		}
+		var prettyEnv = JSON.stringify(process.env,null,4);
+		
+		res.render('config', {"pretty": prettyEnv, "filesystem": filesystem, "config": config, "secret": secret });
+	}
+);
+
+
 app.get('/home',  
 	function(req, res) {
 		var status = healthStatus();
-		res.render('home', {"pretty": prettyEnv, "pod": pod, "healthStatus": status, "filesystem": filesystem });
+		res.render('home', {"pod": pod, "healthStatus": status, "filesystem": filesystem, "version": appVersion });
 	}
 );
 
@@ -156,6 +178,8 @@ app.get('/',
 		res.redirect('home');
 	}
 );
+
+console.log("Version: " + appVersion );
 
 // 7 second delay in start up, to help explore crashes
 setTimeout( function(){

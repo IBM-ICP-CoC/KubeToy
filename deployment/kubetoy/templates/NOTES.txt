@@ -1,1 +1,0 @@
-This is just a simple toy application for exploring kubernetes.
