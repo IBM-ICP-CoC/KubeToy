@@ -18,7 +18,7 @@ files](https://github.com/IBM-ICP-CoC/KubeToy/tree/master/deployment).
 **[Adding Helm chart repository](documention/AddHelmRepository.md)**
 Add the IBM Cloud Private Center of Competency Helm chart repository to your ICP cluster.
 
-**[Deploying KubeToy from Helm Chart](DeployHelm.md)** Deploy an older version of the chart 
+**[Deploying KubeToy from Helm Chart](documentation/DeployHelm.md)** Deploy an older version of the chart 
 from the Helm catalog, verify it is working, then upgrade to the latest version.
 
 
