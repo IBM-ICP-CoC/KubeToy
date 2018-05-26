@@ -1,12 +1,12 @@
 # KubeToy
-## v1.3.0
+## v1.4.0
 ### Tested with ICP versions: 2.1.0 - 2.1.0.3
 
 A simple Node.js application that deploys to IBM Cloud Private.  It is used to help 
 explore the functionality of Kubernetes.  This toy application has a user interface 
 which you can:
 
-* write messages to the log
+* write messages to the log (stdout / stderr)
 * intentionally crash the application to view auto repair
 * toggle a liveness probe and monitor kuberenetes behavior  
 * read config maps and secrets from environment vars and files
