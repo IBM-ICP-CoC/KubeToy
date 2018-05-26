@@ -3,10 +3,10 @@ const bodyParser = require('body-parser');
 const validFilename = require('valid-filename');
 const fs = require('fs');
 
-const appVersion = "1.3.0";
+const appVersion = "1.4.0";
 
-const configFile = "/var/config/config-file";
-const secretFile = "/var/secret/toy-secret";
+const configFile = "/var/config/config.json";
+const secretFile = "/var/secret/toy-secret.txt";
 
 var app = express();
 app.use(express.static(__dirname + '/public'));
@@ -100,6 +100,13 @@ app.get('/logit', function(req,res){
 	console.log(msg);
 	res.redirect('home');
 });
+
+app.get('/errit', function(req,res){
+	var msg = req.query.msg;
+	console.error(msg);
+	res.redirect('home');
+});
+
 
 function crash(msg, res){
 	// write message to log

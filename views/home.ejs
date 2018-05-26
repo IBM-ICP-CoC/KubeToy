@@ -37,9 +37,18 @@
 	
 	<div class="input-group mb-3">
 		<form class="form-inline" method="GET" action="logit">
-			<input type="text" class="form-control mb-2 mr-sm-2" name="msg" placeholder="Message for log">
+			<input type="text" class="form-control mb-2 mr-sm-2" name="msg" placeholder="Message for stdout">
 			    <div class="input-group-prepend">
 			      <button type="submit" class="btn btn-primary mb-2">Log It!</button>
+			    </div>
+		</form>
+	</div>
+
+	<div class="input-group mb-3">
+		<form class="form-inline" method="GET" action="errit">
+			<input type="text" class="form-control mb-2 mr-sm-2" name="msg" placeholder="Message for stderr">
+			    <div class="input-group-prepend">
+			      <button type="submit" class="btn btn-danger mb-2">Err It!</button>
 			    </div>
 		</form>
 	</div>
