@@ -16,7 +16,8 @@
 
 <h1>Filesystem</h1>
 
-	<p><a href="home">home</a> | <a href="files">filesystem</a> | <a href="about.html">about</a></p>
+<% if( filesystem ) { %><a href="files">filesystem</a> | <% } %>
+<a href="config">config maps and secrets</a> | <a href="about.html">about</a></p>
 
 
 	<form method="POST" action="files">
