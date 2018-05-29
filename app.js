@@ -47,12 +47,12 @@ if( filesystem ) {
 			if( err ) {
 				var pretty = JSON.stringify(err,null,4);
 				  console.error(pretty);
-				  res.render('error', { "pod": pod, "msg": pretty });
+				  res.render('error', { "pod": pod, "filesystem": filesystem, "msg": pretty });
 			} else {
 				if( !items ) {
 					items = [];
 				}
-				res.render('files', { "pod": pod, "items": items, "directory": directory });
+				res.render('files', { "pod": pod, "items": items, "filesystem": filesystem, "directory": directory });
 			}
 		});
 	});
@@ -79,7 +79,7 @@ if( filesystem ) {
 				  if (err) {
 					  var pretty = JSON.stringify(err,null,4);
 					  console.error(pretty);
-					  res.render('error', { "pod": pod, "msg": pretty });
+					  res.render('error', { "pod": pod, "filesystem": filesystem, "msg": pretty });
 				  } else{
 					  res.redirect('files');
 				  }
@@ -87,7 +87,7 @@ if( filesystem ) {
 		} else {
 			var pretty ='Invalid filename: "' + filename + '"';
 			console.error(pretty);
-			res.render('error', { "pod": pod, "msg": pretty });
+			res.render('error', { "pod": pod, "filesystem": filesystem, "msg": pretty });
 		}
 		
 	});
