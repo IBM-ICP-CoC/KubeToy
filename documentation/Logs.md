@@ -24,7 +24,7 @@ The latest entry in the log should be your message.
 
 Search for your message (place it or a part of it in double quotes) and display the details.
 
-![Kibana](Kibanba.png)
+![Kibana](Kibana.png)
 
 There is a lot of meta information describing the kubernetes information.  The stream value
 should indicate stdout. 
