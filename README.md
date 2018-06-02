@@ -24,6 +24,9 @@ from the Helm catalog, verify it is working, then upgrade to the latest version.
 **[Playing with the logs](documentation/Logs.md)** 
 Use the app to write to the logs, then view the logs in the UI and via Kibana.
 
+**[Crash the app](documentation/Crash.md)**
+Intentionally crash the application and watch it self heal.
+
 
 
 

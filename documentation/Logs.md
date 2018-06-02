@@ -28,3 +28,9 @@ Search for your message (place it or a part of it in double quotes) and display 
 
 There is a lot of meta information describing the kubernetes information.  The stream value
 should indicate stdout. 
+
+4. Back at the KubeToy application use the Message for stderr (Err It!) to send a message to 
+stderr.  Verify it with the ICP UI (Workloads > Deployment) and Kibana as you did before.  In this 
+case the only difference you will note is the steam is indicated as stderr in the Kibana interface.
+Otherwise the log message appears just like stdout.
+
