@@ -155,7 +155,6 @@ app.get('/config',
 		var config = "(file missing)";
 		var secret = "(file missing)";
 		
-		console.log(fs.existsSync(configFile));
 		if( fs.existsSync(configFile) ) {
 			config = fs.readFileSync(configFile);
 		}
