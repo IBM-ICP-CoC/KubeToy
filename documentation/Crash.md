@@ -48,4 +48,4 @@ Kubernetes needed to restart the pod due to the crash.
 
 You will also notice the message in the logs:
 
-~[](crash_logs.png)
+![](crash_logs.png)
