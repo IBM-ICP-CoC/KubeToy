@@ -62,7 +62,7 @@ line.  First initialize your client by using the User menu in the upper right ha
 the pods running in the namespace ```demo``` (the namespace where we are running KubeToy).
 
 ```
-$ **kubectl get pods -n demo**
+$ kubectl get pods -n demo
 NAME                                    READY     STATUS    RESTARTS   AGE
 default-http-backend-7cb6955c76-mtw7m   1/1       Running   0          7d
 kubetoy-kubetoy-54f479b976-m4m7b        1/1       Running   0          17m
@@ -78,7 +78,7 @@ log message was sent from.  Then display the logs using the kubectl command.  Do
 forget to include the ```-n <namespace>``` argument.
 
 ```
-$ **kubectl logs -n demo kubetoy-kubetoy-54f479b976-qsgxv**
+$ kubectl logs -n demo kubetoy-kubetoy-54f479b976-qsgxv
 Version: 1.5.0
 qsgxv: server starting on port 3000
 Hello kube toy.
