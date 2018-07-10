@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const validFilename = require('valid-filename');
 const fs = require('fs');
 
-const appVersion = "1.5.0";
+const appVersion = "1.5.1";
 
 const configFile = "/var/config/config.json";
 const secretFile = "/var/secret/toy-secret.txt";

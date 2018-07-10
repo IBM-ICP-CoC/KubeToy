@@ -38,7 +38,7 @@ see a small dying page message, and it is is the last 5 digits of the pod that a
 ![death screen](death_screen.png)
 
 Keep a close eye on the pods in the ICP UI.  If you are quick enough you should see the pod that
-died display 0/1 in the Ready column briefly, as Kubenetes replaces it with a new instance.  If 
+died display 0/1 in the Ready column briefly, as Kubernetes replaces it with a new instance.  If 
 you don't after a few seconds, you might need to verify by examining the events of that pod:
 
 ![](events2.png)
