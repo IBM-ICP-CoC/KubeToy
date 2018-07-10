@@ -2,7 +2,10 @@
 
 In this scenario you will deploy the KubeToy application to ICP from the helm catalog. This scenario 
 start with a next to the latest version of the app so that we can show how an app can be upgraded when 
-newer versions become available.
+newer versions become available.  
+
+*Note: the screen shots shown here are from an earlier version of KubeToy.  The scenario will work for 
+the most recently deployed versions, regardless.
 
 1. Use the main menu to open up the catalog, **Catalog** > **Helm Charts**.  Search for the KubeToy chart.
 

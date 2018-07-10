@@ -7,7 +7,7 @@ the CLI you will need the Kubernetes CLI tools [installed on your workstation](h
 1. Open up an instance of the KubeToy home page in a browser.  Enter in a message in the 
    *Message for stdout* field and then press the Logit! button.
    
-![Logit](logit.png)
+![Logit](LogIt.png)
 
 Take notice of the pod identifier that appears after you submitted the log message.
 
