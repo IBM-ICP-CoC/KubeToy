@@ -23,6 +23,8 @@ spec:
             mountPath: /var/config
           - name: secretvol
             mountPath: /var/secret
+          - name: datavol
+            mountPath: /var/test
           livenessProbe:
             httpGet:
               path: /health
@@ -47,51 +49,7 @@ spec:
             - name: secretvol
               secret:
                 secretName: kubetoy-secret-files
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: kubetoy
-  labels:
-    app: kubetoy
-spec:
-  type: NodePort
-  ports:
-    - port: 80
-      targetPort: 3000
-      protocol: TCP
-      name: kubetoy
-  selector:
-    app: kubetoy
----
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: kubetoy-configmap-env
-data:
-  ENV_TOY_CONFIGMAP: 'This is a configuration value.'
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: kubetoy-secret-env
-type: Opaque
-data:
-  ENV_TOY_SECRET: VGhpcyBpcyBhIHRlc3Q=
----
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: kubetoy-configmap-files
-data:
-  config.json:  '{ "default": "123" }'
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: kubetoy-secret-files
-type: Opaque
-data:
-  toy-secret.txt: U2hoLi4uIFRoaXMgaXMgYSBzZWNyZXQu
-
-  
+            - name: datavol
+              persistentVolumeClaim:
+                claimName: kubetoy-pvc
+            
