@@ -14,7 +14,7 @@ spec:
       spec:
         containers:
         - name: kubetoy
-          image: ibmicpcoc/kubetoy:1.5.1
+          image: ibmicpcoc/kubetoy:latest
           imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 3000

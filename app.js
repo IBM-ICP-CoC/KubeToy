@@ -2,8 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const validFilename = require('valid-filename');
 const fs = require('fs');
+const ping = require('net-ping-hr');
+const util = require('util');
+const sprintf = require("sprintf-js").sprintf;
+const dns = require('dns');
 
-const appVersion = "1.5.1";
+const appVersion = "1.6.0";
 
 const configFile = "/var/config/config.json";
 const secretFile = "/var/secret/toy-secret.txt";
@@ -93,6 +97,166 @@ if( filesystem ) {
 	});
 
 }
+
+app.post('/dns', function(req,res){
+	var host = req.body.dnsHost;
+	
+	if( !host ) {
+		var message = "Please provide a host name or IP";
+		var args = { 
+				"pod": pod, 
+				"filesystem": filesystem, 
+				"pingResponse": "",
+				"pingHost": "",
+				"pingActive": "",
+				"dnsResponse": message,
+				"dnsHost": host,
+				"dnsActive": "active" 
+			};
+		
+		res.render('network', args);
+	} else {
+		// ping options
+		var options = {
+		    networkProtocol: ping.NetworkProtocol.IPv4,
+		    packetSize: 16,
+		    retries: 1,
+		    timeout: 2000,
+		    ttl: 128
+		};
+		
+		
+		dns.resolve4(host, function(err,addresses){
+			if( err ) {
+				var args = { 
+						"pod": pod, 
+						"filesystem": filesystem, 
+						"pingResponse": "",
+						"pingHost": "",
+						"pingActive": "",
+						"dnsResponse": err,
+						"dnsHost": host,
+						"dnsActive": "active" 
+					};
+				
+				res.render('network', args);
+			} else {
+				console.log( addresses );
+				var addrList = '';
+				for(var i=0;i<addresses.length;i++){
+					if( i>1 ) {
+						addrList += '\n'+addresses[i];
+					} else {
+						addrList += addresses[i];
+					}
+				}
+				
+				var args = { 
+						"pod": pod, 
+						"filesystem": filesystem, 
+						"pingResponse": "",
+						"pingHost": "",
+						"pingActive": "",
+						"dnsResponse": addrList,
+						"dnsHost": host,
+						"dnsActive": "active" 
+					};
+				res.render('network', args);
+			}
+		});
+	}
+	
+
+	
+});
+
+
+app.post('/ping', function(req,res){
+	var host = req.body.pingHost;
+	
+	if( !host ) {
+		var message = "Please provide a host name or IP";
+		var args = { 
+				"pod": pod, 
+				"filesystem": filesystem, 
+				"pingResponse": message,
+				"pingHost": host,
+				"pingActive": "active",
+				"dnsResponse": "",
+				"dnsHost": "",
+				"dnsActive": "" 
+			};
+		res.render('network', args);
+	}
+	
+	// ping options
+	var options = {
+	    networkProtocol: ping.NetworkProtocol.IPv4,
+	    packetSize: 16,
+	    retries: 1,
+	    timeout: 2000,
+	    ttl: 128
+	};
+	
+	var session = ping.createSession(options);
+	
+	dns.resolve4(host, function(err,addresses){
+		
+		if( err ) {
+			var args = { 
+					"pod": pod, 
+					"filesystem": filesystem, 
+					"pingResponse": err,
+					"pingHost": host,
+					"pingActive": "active",
+					"dnsResponse": "",
+					"dnsHost": "",
+					"dnsActive": "" 
+				};
+			res.render('network', args);
+		} else {
+			console.log( addresses );
+			var ip = addresses[0];
+			session.pingHost(ip, function(error, ip) {
+				var message;
+			    if (error){
+			    	message = ip + ": " + error;
+			    }
+			    else {
+			    	message = ip + ": Alive";
+			    }
+				var args = { 
+						"pod": pod, 
+						"filesystem": filesystem, 
+						"pingResponse": message,
+						"pingHost": host,
+						"pingActive": "active",
+						"dnsResponse": "",
+						"dnsHost": "",
+						"dnsActive": "" 
+					};
+				res.render('network', args);
+			});
+		}
+	});
+
+	
+});
+
+
+app.get('/network', function(req,res){
+	var args = { 
+			"pod": pod, 
+			"filesystem": filesystem, 
+			"pingResponse": "",
+			"pingHost": "",
+			"pingActive": "",
+			"dnsResponse": "",
+			"dnsHost": "",
+			"dnsActive": "active" 
+		};
+	res.render('network', args);
+});
 
 
 app.get('/logit', function(req,res){
@@ -187,13 +351,9 @@ app.get('/',
 
 console.log("Version: " + appVersion );
 
-// 7 second delay in start up, to help explore crashes
-setTimeout( function(){
-	app.listen(app.get('port'), '0.0.0.0', function() {
-		  console.log(pod + ": server starting on port " + app.get('port'));
-	})},
-	7000
-);
+app.listen(app.get('port'), '0.0.0.0', function() {
+	  console.log(pod + ": server starting on port " + app.get('port'));
+});
 
 
 

@@ -26,8 +26,8 @@ spec:
       spec:
         containers:
         - name: kubetoy
-          image: ibmicpcoc/kubetoy:1.5.1
-          imagePullPolicy: IfNotPresent
+          image: ibmicpcoc/kubetoy:1.6.0
+          imagePullPolicy: Always
           ports:
           - containerPort: 3000
           volumeMounts:
@@ -54,16 +54,16 @@ spec:
               secretKeyRef:
                 name: kubetoy-secret-env
                 key: ENV_TOY_SECRET
-          volumes:
-            - name: configvol
-              configMap:
-                name: kubetoy-configmap-files
-            - name: secretvol
-              secret:
-                secretName: kubetoy-secret-files
-            - name: datavol
-              persistentVolumeClaim:
-                claimName: kubetoy-pvc
+        volumes:
+          - name: configvol
+            configMap:
+              name: kubetoy-configmap-files
+          - name: secretvol
+            secret:
+              secretName: kubetoy-secret-files
+          - name: datavol
+            persistentVolumeClaim:
+              claimName: kubetoy-pvc
 ---
 apiVersion: v1
 kind: Service

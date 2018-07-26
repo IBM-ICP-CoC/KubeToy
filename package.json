@@ -1,6 +1,6 @@
 {
-	"name": "helloicp",
-	"version": "1.0.0",
+	"name": "kubetoy",
+	"version": "1.6.0",
 	"private": true,
 	"scripts": {
 		"start": "node app.js"
@@ -10,7 +10,9 @@
 		"body-parser": "1.18.*",
 		"ejs": "^2.5.x",
 		"valid-filename": "*",
-		"filename-reserved-regex": "*"
+		"filename-reserved-regex": "*",
+		"net-ping-hr": "*",
+		"sprintf-js": "*"
 	},
 	"repository": {}
 }

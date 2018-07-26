@@ -1,68 +1,3 @@
-apiVersion: apps/v1 
-kind: Deployment
-metadata:
-  name: kubetoy
-spec:
-    selector:
-      matchLabels:
-        app: kubetoy
-    replicas: 3
-    template:
-      metadata:
-        labels:
-          app: kubetoy
-      spec:
-        containers:
-        - name: kubetoy
-          image: ibmicpcoc/kubetoy:1.5.1
-          imagePullPolicy: IfNotPresent
-          ports:
-          - containerPort: 3000
-          volumeMounts:
-          - name: configvol
-            mountPath: /var/config
-          - name: secretvol
-            mountPath: /var/secret
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 3000
-            initialDelaySeconds: 10
-            periodSeconds: 5
-          env:
-          - name: ENV_TOY_CONFIGMAP
-            valueFrom: 
-              configMapKeyRef:
-                name: kubetoy-configmap-env
-                key: ENV_TOY_CONFIGMAP
-          - name: ENV_TOY_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: kubetoy-secret-env
-                key: ENV_TOY_SECRET
-          volumes:
-            - name: configvol
-              configMap:
-                name: kubetoy-configmap-files
-            - name: secretvol
-              secret:
-                secretName: kubetoy-secret-files
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: kubetoy
-  labels:
-    app: kubetoy
-spec:
-  type: NodePort
-  ports:
-    - port: 80
-      targetPort: 3000
-      protocol: TCP
-      name: kubetoy
-  selector:
-    app: kubetoy
 ---
 kind: ConfigMap
 apiVersion: v1
@@ -93,5 +28,69 @@ metadata:
 type: Opaque
 data:
   toy-secret.txt: U2hoLi4uIFRoaXMgaXMgYSBzZWNyZXQu
-
-  
+---
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: kubetoy
+spec:
+    selector:
+      matchLabels:
+        app: kubetoy
+    replicas: 3
+    template:
+      metadata:
+        labels:
+          app: kubetoy
+      spec:
+        containers:
+        - name: kubetoy
+          image: ibmicpcoc/kubetoy:1.6.0
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 3000
+          volumeMounts:
+          - name: configvol
+            mountPath: /var/config
+          - name: secretvol
+            mountPath: /var/secret
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          env:
+          - name: ENV_TOY_CONFIGMAP
+            valueFrom: 
+              configMapKeyRef:
+                name: kubetoy-configmap-env
+                key: ENV_TOY_CONFIGMAP
+          - name: ENV_TOY_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: kubetoy-secret-env
+                key: ENV_TOY_SECRET
+        volumes:
+          - name: configvol
+            configMap:
+              name: kubetoy-configmap-files
+          - name: secretvol
+            secret:
+              secretName: kubetoy-secret-files
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubetoy
+  labels:
+    app: kubetoy
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+      name: kubetoy
+  selector:
+    app: kubetoy

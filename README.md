@@ -1,5 +1,5 @@
 # KubeToy
-## v1.5.1
+## v1.6.0
 ### Tested with ICP versions: 2.1.0 - 2.1.0.3
 
 A simple Node.js application that deploys to IBM Cloud Private.  It is used to help 
@@ -33,6 +33,9 @@ deployed to ICP.
 **[Shared Filesystem](documentation/Filesystem.md)** Use the shared files system to store and read 
 content across all instances of the application.  File information is persisted even if the app
 crashes.
+
+**[Network](documentation/Network.md)** Ping and do DNS lookups from the server side app.  You can verify
+visibilty of related ClusterIP services.
 
 **[Ingress](documentation/Ingress.md)** Show how you can, with the help of nginx you can set up an
 ingress for this app, with your own custom certs providing SSL protection.
