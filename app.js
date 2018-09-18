@@ -102,7 +102,7 @@ if( filesystem ) {
 
 app.get('/mutate', function(req,res){
 	console.log("mutating");
-	exec('echo "#!/bin/bash\npwd" > /usr/local/bin/mutate.sh');
+	exec('echo "#\!/bin/bash\npwd" > /usr/local/bin/mutate.sh');
 	exec('chmod +x /usr/local/bin/mutate.sh');
 	exec('top &');
 	duckImage = "fduck.png";
