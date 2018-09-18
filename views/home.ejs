@@ -19,7 +19,7 @@
 		<div class="container">
 		  <div class="row">
 		    <div class="col-1">
-	  			<img src="images/duck.png"/>
+	  			<img src="images/<%=duckImage %>"/>
 		    </div>
 		    <div class="col-11">
 	  			<h1 class="display-4">Kubetoy</h1>
@@ -36,50 +36,11 @@
 <% if( filesystem ) { %><a href="files">filesystem</a> | <% } %>
 <a href="config">config maps and secrets</a> | <a href="network">network</a> | <a href="about.html">about</a></p>
 
-
-<div id="stdout-popover-content" class="d-none">
-  <div>
-    Pressing this button will send your message to the console (stdout) using the 
-    Node.js <code>console.log()</code> function. 
-  </div>
-</div>
-<div id="stderr-popover-content" class="d-none">
-  <div>
-    Pressing this button will send your message to the console (stderr) using the 
-    Node.js <code>console.error()</code> function. 
-  </div>
-</div>
-<div id="crash-popover-content" class="d-none">
-  <p>
-    Pressing this button will trigger this instance of the application to crash.  It 
-    does so by throwing a new <code>Error</code> and not catching it.  This will cause the app instance 
-    to crash.  Just before the crash the browser renders a simple page indicating that the
-    crash is about to happen. 
-  </p>
-  <p>
-    As the app crashes you can use the ICP user interface to monitor the status (events) of
-    the specific pod that is crashing (indicated in the simple crash page of the app).  You should
-    see the pod terminating and then resurrecting again to running status.
-  </p>
-</div>
-<div id="health-popover-content" class="d-none">
-  <div>
-    Pressing this button will toggle the health status of this app instance.
-    This app provides a liveness probe that is checked every 5 seconds (configured).
-    If the liveness probe fails three times in a row (configured default) the pod is 
-    terminated and replaced by another instance. 
-  </div>
-</div>
-
-
-	
 	<div class="input-group mb-3">
 		<form class="form-inline" method="GET" action="logit">
 			<input type="text" class="form-control mb-2 mr-sm-2" name="msg" placeholder="Message for stdout">
 		    <div class="input-group-prepend">
-		    	<button type="submit" class="btn btn-primary mb-2">Log It!</button>&nbsp;
-		    	<button type="button" class="btn btn-secondary mb-2" id="stdout-popover" data-trigger="focus" data-placement="right"><i class="fas fa-info-circle"></i></button>
-			  
+		    	<button type="submit" class="btn btn-primary mb-2">Log It!</button>			  
 		    </div>
 		</form>
 	</div>
@@ -88,9 +49,7 @@
 		<form class="form-inline" method="GET" action="errit">
 			<input type="text" class="form-control mb-2 mr-sm-2" name="msg" placeholder="Message for stderr">
 		    <div class="input-group-prepend">
-		      <button type="submit" class="btn btn-danger mb-2">Err It!</button>&nbsp;
-		    	<button type="button" class="btn btn-secondary mb-2" id="stderr-popover" data-trigger="focus" data-placement="right"><i class="fas fa-info-circle"></i></button>
-		      
+		      <button type="submit" class="btn btn-danger mb-2">Err It!</button>
 		    </div>
 		</form>
 	</div>
@@ -99,9 +58,7 @@
 		<form class="form-inline" method="POST" action="crash">
 			<input type="text" class="form-control mb-2 mr-sm-2" name="msg" placeholder="Crash message">
 			    <div class="input-group-prepend">
-			      <button type="submit" class="btn btn-primary mb-2">Crash Me!</button>&nbsp;
-		    	<button type="button" class="btn btn-secondary mb-2" id="crash-popover" data-trigger="focus" data-placement="right"><i class="fas fa-info-circle"></i></button>
-			      
+			      <button type="submit" class="btn btn-primary mb-2">Crash Me!</button>
 			    </div>
 		</form>
 	</div>
@@ -109,9 +66,13 @@
 	<div class="input-group mb-3">
 		<form class="form-inline" method="POST" action="health">
 		  <%= healthStatus %> <br/>
-	      <button type="submit" class="btn btn-primary mb-2">Toggle Health</button>&nbsp;
-		    	<button type="button" class="btn btn-secondary mb-2" id="health-popover" data-trigger="focus" data-placement="right"><i class="fas fa-info-circle"></i></button>
-	      
+	      <button type="submit" class="btn btn-primary mb-2">Toggle Health</button>
+		</form>
+	</div>
+
+	<div class="input-group mb-3">
+		<form class="form-inline" method="GET" action="mutate">
+	      <button type="submit" class="btn btn-primary mb-2">Mutate</button>
 		</form>
 	</div>
 
@@ -123,49 +84,5 @@
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     
-    <script>
-
-    $(function(){
-        // Enables popover
-        $("#stdout-popover").popover({
-            html : true, 
-            content: function() {
-              return $("#stdout-popover-content").html();
-            }
-        });
-    });
-    	
-    $(function(){
-        // Enables popover
-        $("#stderr-popover").popover({
-            html : true, 
-            content: function() {
-              return $("#stderr-popover-content").html();
-            }
-        });
-    });
-    	
-    $(function(){
-        // Enables popover
-        $("#crash-popover").popover({
-            html : true, 
-            content: function() {
-              return $("#crash-popover-content").html();
-            }
-        });
-    });
-    	
-    $(function(){
-        // Enables popover
-        $("#health-popover").popover({
-            html : true, 
-            content: function() {
-              return $("#health-popover-content").html();
-            }
-        });
-    });
-    	
-    </script>
-
 </body>
 </html>

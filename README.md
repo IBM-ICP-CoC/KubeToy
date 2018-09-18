@@ -1,6 +1,6 @@
 # KubeToy
-## v1.6.0
-### Tested with ICP versions: 2.1.0 - 2.1.0.3
+## v1.7.0
+### Tested with ICP versions: 2.1.0 - 3.1.0
 
 A simple Node.js application that deploys to IBM Cloud Private.  It is used to help 
 explore the functionality of Kubernetes.  This toy application has a user interface 

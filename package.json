@@ -11,7 +11,7 @@
 		"ejs": "^2.5.x",
 		"valid-filename": "*",
 		"filename-reserved-regex": "*",
-		"net-ping-hr": "*",
+		"net-ping-hr": "^2.0.x",
 		"sprintf-js": "*"
 	},
 	"repository": {}

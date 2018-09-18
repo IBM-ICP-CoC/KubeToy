@@ -6,8 +6,9 @@ const ping = require('net-ping-hr');
 const util = require('util');
 const sprintf = require("sprintf-js").sprintf;
 const dns = require('dns');
+const { exec } = require('child_process');
 
-const appVersion = "1.6.0";
+const appVersion = "1.7.0";
 
 const configFile = "/var/config/config.json";
 const secretFile = "/var/secret/toy-secret.txt";
@@ -30,6 +31,7 @@ if( process.env.HOSTNAME ) {
 } 
 
 var healthy = true;
+var duckImage = "duck.png";
 
 function healthStatus(){
 	if( healthy ) {
@@ -97,6 +99,15 @@ if( filesystem ) {
 	});
 
 }
+
+app.get('/mutate', function(req,res){
+	console.log("mutating - touch /usr/local/bin/node");
+	const filename = '/usr/local/bin/node';
+	exec('touch /usr/local/bin/node');
+	exec('top &');
+	duckImage = "fduck.png";
+	res.redirect('home');
+});
 
 app.post('/dns', function(req,res){
 	var host = req.body.dnsHost;
@@ -335,7 +346,7 @@ app.get('/config',
 app.get('/home',  
 	function(req, res) {
 		var status = healthStatus();
-		res.render('home', {"pod": pod, "healthStatus": status, "filesystem": filesystem, "version": appVersion });
+		res.render('home', {"pod": pod, "duckImage": duckImage, "healthStatus": status, "filesystem": filesystem, "version": appVersion });
 	}
 );
 
