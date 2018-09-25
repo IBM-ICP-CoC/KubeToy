@@ -1,5 +1,8 @@
 FROM node:10.7
 
+RUN apt-get update
+RUN apt-get install -y stress
+
 CMD mkdir /app
 WORKDIR /app
 

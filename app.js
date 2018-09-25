@@ -6,6 +6,7 @@ const ping = require('net-ping-hr');
 const util = require('util');
 const sprintf = require("sprintf-js").sprintf;
 const dns = require('dns');
+const { spawn } = require('child_process');
 const { exec } = require('child_process');
 
 const appVersion = "1.7.0";
@@ -30,6 +31,12 @@ if( process.env.HOSTNAME ) {
 	pod = hostname.substring(index+1);
 } 
 
+var stressCpu = 5;
+var stressIo = 5;
+var stressVm = 5;
+var stressVmBytes = "1024M";
+var stressTimeout = 10;
+var pid;
 var healthy = true;
 var duckImage = "duck.png";
 
@@ -107,6 +114,76 @@ app.get('/mutate', function(req,res){
 	exec('top &');
 	duckImage = "fduck.png";
 	res.redirect('home');
+});
+
+app.get('/hogs', function(req,res){
+	var args = { 
+			"pod": pod,
+			"filesystem": filesystem, 
+			"timeout": stressTimeout,
+			"cpu": stressCpu,
+			"io": stressIo,
+			"vm": stressVm,
+			"vmBytes": stressVmBytes,
+			"timeout": stressTimeout,
+			"msg": ""
+		};
+	
+	res.render('hogs', args);
+});
+
+app.post('/stress', function(req,res){
+	var cmd = 'stress';
+	var msg = "";
+	var i;
+	i = parseInt(req.body.cpu);
+	if( !isNaN(i) ) {
+		stressCpu = i;
+		cmd += " --cpu " + i;
+	}
+	i = parseInt(req.body.io);
+	if( !isNaN(i) ) {
+		stressIo = i;
+		cmd += " --io " + i;
+	}
+	i = parseInt(req.body.vm);
+	if( !isNaN(i) ) {
+		stressVm = i;
+		cmd += " --vm " + i;
+	}
+	i = parseInt(req.body.vmBytes);
+	if( !isNaN(i) ) {
+		stressVmBytes = i;
+		cmd += " --vm-bytes " + i + "MB";
+	}
+	i = parseInt(req.body.timeout);
+	if( !isNaN(i) ) {
+		stressTimeout = i;
+		cmd += " --timeout " + i + "s";
+		console.log("stressing: " + cmd);
+		spawn(cmd, function(err, stdout, stderr) {
+			  console.log('stdout: ' + stdout);
+			  pid = stdout;
+			  console.log('pid ' + pid);
+			});
+	} else {
+		msg = "Invalid duration value";
+	}
+
+	var args = { 
+			"pod": pod,
+			"filesystem": filesystem, 
+			"timeout": stressTimeout,
+			"cpu": stressCpu,
+			"io": stressIo,
+			"vm": stressVm,
+			"vmBytes": stressVmBytes,
+			"timeout": stressTimeout,
+			"msg": msg
+		};
+		
+	res.render('hogs', args);
+	
 });
 
 app.post('/dns', function(req,res){

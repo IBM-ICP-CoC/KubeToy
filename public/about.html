@@ -21,8 +21,11 @@
 	by allowing the user to write messages to the log, crash the application, and even
 	create and view files in a shared file system.</p>
 	
-	<p>This latest version added the Network page, allowing you to ping and do DNS lookups from
-	the server side app running in a container in the Kubernetes managed platform.</p>
+	<p>This latest version added the Stress page, which allows you to issue the Linux 
+	<a href="https://people.seas.harvard.edu/~apw/stress/" target="_blank">stress</a>
+	command.  This allows you to intentionally create CPU, IO and memory access loads in the
+	container running this app.  The mutate button was also added that will trigger a 
+	mutation alert (new feature of ICP 3.1.0)</p>
 	
 	<p>This app uses Bootstrap 4.  All the files have been copied locally to this
 	application so Internet connectivity is not required and can work in 
