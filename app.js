@@ -161,11 +161,7 @@ app.post('/stress', function(req,res){
 		stressTimeout = i;
 		cmd += " --timeout " + i + "s";
 		console.log("stressing: " + cmd);
-		spawn(cmd, function(err, stdout, stderr) {
-			  console.log('stdout: ' + stdout);
-			  pid = stdout;
-			  console.log('pid ' + pid);
-			});
+		exec(cmd);
 	} else {
 		msg = "Invalid duration value";
 	}
