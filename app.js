@@ -3,12 +3,13 @@ const bodyParser = require('body-parser');
 const validFilename = require('valid-filename');
 const fs = require('fs');
 const ping = require('net-ping-hr');
+const { exec } = require('child_process');
 const util = require('util');
 const sprintf = require("sprintf-js").sprintf;
 const dns = require('dns');
 const { uname } = require('node-uname');
 const sysInfo = uname();
-const sysInfoStr = `Sysname: ${sysInfo.sysname}, Nodename: ${sysInfo.nodename}, Machine: ${sysInfo.machine}, Release: ${sysInfo.release}`
+const sysInfoStr = `Arch: ${sysInfo.machine}, Release: ${sysInfo.release}`
 const appVersion = "1.8.0";
 
 const configFile = "/var/config/config.json";

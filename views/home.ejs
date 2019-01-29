@@ -36,52 +36,39 @@
 <p><a href="home">home</a> | 
 <% if( filesystem ) { %><a href="files">filesystem</a> | <% } %>
 <a href="config">config maps and secrets</a> | <a href="network">network</a> | <a href="about.html">about</a></p>
+<hr/>
 
-	<div class="input-group mb-3">
-		<form class="form-inline" method="GET" action="logit">
-			<input type="text" class="form-control mb-2 mr-sm-2" name="msg" placeholder="Message for stdout">
-		    <div class="input-group-prepend">
-		    	<button type="submit" class="btn btn-primary mb-2">Log It!</button>			  
-		    </div>
-		</form>
-	</div>
-
-	<div class="input-group mb-3">
-		<form class="form-inline" method="GET" action="errit">
-			<input type="text" class="form-control mb-2 mr-sm-2" name="msg" placeholder="Message for stderr">
-		    <div class="input-group-prepend">
-		      <button type="submit" class="btn btn-danger mb-2">Err It!</button>
-		    </div>
-		</form>
-	</div>
-
-	<div class="input-group mb-3">
-		<form class="form-inline" method="POST" action="crash">
-			<input type="text" class="form-control mb-2 mr-sm-2" name="msg" placeholder="Crash message">
-			    <div class="input-group-prepend">
-			      <button type="submit" class="btn btn-primary mb-2">Crash Me!</button>
-			    </div>
-		</form>
-	</div>
-	
-	<div class="input-group mb-3">
+<div class="row">
+	<div class="col-sm">
+			<form class="form-inline" method="GET" action="logit">
+				<input type="text" class="form-control mb-2 mr-sm-2" name="msg" placeholder="Message for stdout">
+					<div class="input-group-prepend">
+						<button type="submit" class="btn btn-primary mb-2">Log It!</button>			  
+					</div>
+			</form>
+			<form class="form-inline" method="GET" action="errit">
+				<input type="text" class="form-control mb-2 mr-sm-2" name="msg" placeholder="Message for stderr">
+					<div class="input-group-prepend">
+						<button type="submit" class="btn btn-danger mb-2">Err It!</button>
+					</div>
+			</form>
+			<form class="form-inline" method="POST" action="crash">
+				<input type="text" class="form-control mb-2 mr-sm-2" name="msg" placeholder="Crash message">
+						<div class="input-group-prepend">
+							<button type="submit" class="btn btn-primary mb-2">Crash Me!</button>
+						</div>
+			</form>
+		</div>
+	<div class="col-sm">
 		<form class="form-inline" method="POST" action="health">
-			<div class="form-group row">
-				<div class="form-group col-md-12">
-	      			<p><%= healthStatus %></p>
-				</div>
-				<div class="form-group col-md-4">
-			      	<button type="submit" id="health" class="btn btn-primary mb-2">Toggle Health</button>
-	      		</div>
-	      	</div>
+				<p><%= healthStatus %></p> &nbsp; <button type="submit" id="health" class="btn btn-primary mb-2">Toggle Health</button>
 		</form>
-	</div>
-
-	<div class="input-group mb-3">
 		<form class="form-inline" method="GET" action="mutate">
-	      <button type="submit" class="btn btn-success mb-2">Mutate</button>
-		</form>
+			<button type="submit" class="btn btn-success mb-2">Mutate</button>
+	</form>
+
 	</div>
+</div>
 
 </div>
 

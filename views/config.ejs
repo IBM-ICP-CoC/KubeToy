@@ -37,20 +37,21 @@
 <p><a href="home">home</a> | 
 <% if( filesystem ) { %><a href="files">filesystem</a> | <% } %>
 <a href="config">config maps and secrets</a> | <a href="network">network</a> | <a href="about.html">about</a></p>
+<hr/>
 
 <div class="container">
 	<ul class="nav nav-tabs" role="tablist">
-		<li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#env">Environment Variables</a></li>
-		<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#configmap">ConfigMap File</a></li>
+		<li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#configmap">ConfigMap File</a></li>
 		<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#secret">Secret File</a></li>
+		<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#env">Environment Variables</a></li>
 	</ul>
 
 	<div class="tab-content">
-		<div id="env" class="container tab-pane active"><br>
+		<div id="env" class="container tab-pane"><br>
 			<pre><%=pretty%></pre>
 		</div>
 
-		<div id="configmap" class="container tab-pane"><br>
+		<div id="configmap" class="container tab-pane active"><br>
 			<p>A Kubernetes ConfigMap resource was created and was mounted to a volume visible to this application.
 				      The ConfigMap definition is:</p>
 <pre class="bg-light">
