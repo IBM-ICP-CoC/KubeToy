@@ -6,10 +6,10 @@ const ping = require('net-ping-hr');
 const util = require('util');
 const sprintf = require("sprintf-js").sprintf;
 const dns = require('dns');
-const { spawn } = require('child_process');
-const { exec } = require('child_process');
-
-const appVersion = "1.7.0";
+const { uname } = require('node-uname');
+const sysInfo = uname();
+const sysInfoStr = `Sysname: ${sysInfo.sysname}, Nodename: ${sysInfo.nodename}, Machine: ${sysInfo.machine}, Release: ${sysInfo.release}`
+const appVersion = "1.8.0";
 
 const configFile = "/var/config/config.json";
 const secretFile = "/var/secret/toy-secret.txt";
@@ -81,7 +81,6 @@ if( filesystem ) {
 		});
 	});
 	
-	
 	app.post('/files', function(req,res){
 		var filename = req.body.filename;
 		if( validFilename( filename ) ){
@@ -102,9 +101,7 @@ if( filesystem ) {
 			console.error(pretty);
 			res.render('error', { "pod": pod, "filesystem": filesystem, "msg": pretty });
 		}
-		
 	});
-
 }
 
 app.get('/mutate', function(req,res){
@@ -116,71 +113,6 @@ app.get('/mutate', function(req,res){
 	res.redirect('home');
 });
 
-app.get('/hogs', function(req,res){
-	var args = { 
-			"pod": pod,
-			"filesystem": filesystem, 
-			"timeout": stressTimeout,
-			"cpu": stressCpu,
-			"io": stressIo,
-			"vm": stressVm,
-			"vmBytes": stressVmBytes,
-			"timeout": stressTimeout,
-			"msg": ""
-		};
-	
-	res.render('hogs', args);
-});
-
-app.post('/stress', function(req,res){
-	var cmd = 'stress';
-	var msg = "";
-	var i;
-	i = parseInt(req.body.cpu);
-	if( !isNaN(i) ) {
-		stressCpu = i;
-		cmd += " --cpu " + i;
-	}
-	i = parseInt(req.body.io);
-	if( !isNaN(i) ) {
-		stressIo = i;
-		cmd += " --io " + i;
-	}
-	i = parseInt(req.body.vm);
-	if( !isNaN(i) ) {
-		stressVm = i;
-		cmd += " --vm " + i;
-	}
-	i = parseInt(req.body.vmBytes);
-	if( !isNaN(i) ) {
-		stressVmBytes = i;
-		cmd += " --vm-bytes " + i + "MB";
-	}
-	i = parseInt(req.body.timeout);
-	if( !isNaN(i) ) {
-		stressTimeout = i;
-		cmd += " --timeout " + i + "s";
-		console.log("stressing: " + cmd);
-		exec(cmd);
-	} else {
-		msg = "Invalid duration value";
-	}
-
-	var args = { 
-			"pod": pod,
-			"filesystem": filesystem, 
-			"timeout": stressTimeout,
-			"cpu": stressCpu,
-			"io": stressIo,
-			"vm": stressVm,
-			"vmBytes": stressVmBytes,
-			"timeout": stressTimeout,
-			"msg": msg
-		};
-		
-	res.render('hogs', args);
-	
-});
 
 app.post('/dns', function(req,res){
 	var host = req.body.dnsHost;
@@ -208,7 +140,6 @@ app.post('/dns', function(req,res){
 		    timeout: 2000,
 		    ttl: 128
 		};
-		
 		
 		dns.resolve4(host, function(err,addresses){
 			if( err ) {
@@ -249,9 +180,6 @@ app.post('/dns', function(req,res){
 			}
 		});
 	}
-	
-
-	
 });
 
 
@@ -323,8 +251,6 @@ app.post('/ping', function(req,res){
 			});
 		}
 	});
-
-	
 });
 
 
@@ -419,7 +345,7 @@ app.get('/config',
 app.get('/home',  
 	function(req, res) {
 		var status = healthStatus();
-		res.render('home', {"pod": pod, "duckImage": duckImage, "healthStatus": status, "filesystem": filesystem, "version": appVersion });
+		res.render('home', {"pod": pod, "duckImage": duckImage, "healthStatus": status, "filesystem": filesystem, "version": appVersion, "sysInfoStr": sysInfoStr });
 	}
 );
 
@@ -433,7 +359,9 @@ app.get('/',
 	}
 );
 
-console.log("Version: " + appVersion );
+console.log(`Version: ${appVersion}` );
+console.log(sysInfoStr);
+
 
 app.listen(app.get('port'), '0.0.0.0', function() {
 	  console.log(pod + ": server starting on port " + app.get('port'));

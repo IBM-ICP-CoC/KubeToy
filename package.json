@@ -1,18 +1,19 @@
 {
 	"name": "kubetoy",
-	"version": "1.6.0",
+	"version": "1.8.0",
 	"private": true,
 	"scripts": {
 		"start": "node app.js"
 	},
 	"dependencies": {
-		"express": "4.15.x",
 		"body-parser": "1.18.*",
 		"ejs": "^2.5.x",
-		"valid-filename": "*",
+		"express": "^4.*",
 		"filename-reserved-regex": "*",
 		"net-ping-hr": "^2.0.x",
-		"sprintf-js": "*"
+		"sprintf-js": "*",
+		"valid-filename": "*",
+		"node-uname": "2.0.*"
 	},
 	"repository": {}
 }

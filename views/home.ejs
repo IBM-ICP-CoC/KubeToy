@@ -29,12 +29,13 @@
 	  <p class="lead">A kubernetes toy application to explore kuberenetes deployments.</p>
 	  <p><%=version %></p>
 	  <hr class="my-4">
-	  <p>Currently being served up by pod: <%=pod%> </p>
+	  <p>Currently being served up by pod: <%=pod%> <br/>
+	  <%=sysInfoStr%> </p>
 	</div>
 	
 <p><a href="home">home</a> | 
 <% if( filesystem ) { %><a href="files">filesystem</a> | <% } %>
-<a href="config">config maps and secrets</a> | <a href="network">network</a> | <a href="hogs">stress</a> |<a href="about.html">about</a></p>
+<a href="config">config maps and secrets</a> | <a href="network">network</a> | <a href="about.html">about</a></p>
 
 	<div class="input-group mb-3">
 		<form class="form-inline" method="GET" action="logit">
