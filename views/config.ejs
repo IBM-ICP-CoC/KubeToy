@@ -77,13 +77,13 @@
 					values of the secret are base64 encoded.  In this application the kubernetes secret object looks like:
 				</p>
 <pre>
-		apiVersion: v1
-		kind: Secret
-		metadata:
-			name: kubetoy-secret-files
-		type: Opaque
-		data:
-			toy-secret.txt: U2hoLi4uIFRoaXMgaXMgYSBzZWNyZXQu
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kubetoy-secret-files
+type: Opaque
+  data:
+    toy-secret.txt: U2hoLi4uIFRoaXMgaXMgYSBzZWNyZXQu
 </pre>
 
 		<p>
