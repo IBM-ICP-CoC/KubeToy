@@ -1,6 +1,6 @@
 # KubeToy
-## v1.8.0
-### Tested with ICP versions: 2.1.0 - 3.1.2
+## v1.8.1
+### Tested with ICP versions: 3.1.0 - 3.1.2
 
 A simple Node.js application that deploys to IBM Cloud Private.  It is used to help 
 explore the functionality of Kubernetes.  This toy application has a user interface 
@@ -13,7 +13,7 @@ which you can:
 * if connected to shared storage, read and write files
 
 KubeToy can be installed via helm chart or directly with these [kubernetes definition 
-files](https://github.com/IBM-ICP-CoC/KubeToy/tree/master/deployment).  Version 1.8.0 introduces multiple architecture support (amd64, ppc64le, x390s).
+files](https://github.com/IBM-ICP-CoC/KubeToy/tree/master/deployment).  Version 1.8.0 introduces multiple architecture support (amd64, ppc64le, x390s).  Version 1.8.1 reduces the size of the images (using node:alpine).
 
 **[Adding Helm chart repository](documentation/AddHelmRepository.md)**
 Add the IBM Cloud Private Center of Competency Helm chart repository to your ICP cluster.

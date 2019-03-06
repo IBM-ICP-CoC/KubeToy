@@ -52,56 +52,52 @@
 		</div>
 
 		<div id="configmap" class="container tab-pane active"><br>
-			<p>A Kubernetes ConfigMap resource was created and was mounted to a volume visible to this application.
-				      The ConfigMap definition is:</p>
-<pre class="bg-light">
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: kubetoy-configmap-files
-data:
-  config.json:  '{ "default": "123" }'
-  
-</pre>	     
-			
-			<p>this definition specifies a file with the name <code>config.json</code> whose contents 
-			are a simple json object.  The application sees this file and the current contents are:</p>
+			<p>A Kubernetes ConfigMap resource was created and was mounted to a volume inside this container. 
+				This resource defines that a file called <code>config.json</code>.  It also defines its contents, 
+				which can be edited by the ICP operator to provide configuration data at deployment time.  The folder
+				that this file appears in is defined by the kubernetes deployment object.  In this case it is	
+				<code>/var/config/</code>.
+
+				</p>
+			<p>The application current contents of this configmap are:</p>
 			
 <pre class="bg-light">
 <%= config %>
 </pre>
 			
-			<p>You can change this value with the UI or CLI, and eventually this app will see the 
-			updated content.  This usually takes a few minutes.</p>
+			<p>You can change this value with the UI or CLI.  It usually takes a miniute or two for the change to be
+				reflected in the application.</p>
 		</div>
 
 		<div id="secret" class="container tab-pane"><br>
 
-	      <p>A Kubernetes Secret resource was created and was mounted to a volume visible to this application.
-	      The Secret definition is:</p>
-	      
-<pre class="bg-light">
-apiVersion: v1
-kind: Secret
-metadata:
-  name: kubetoy-secret-files
-type: Opaque
-data:
-  toy-secret.txt: U2hoLi4uIFRoaXMgaXMgYSBzZWNyZXQu
-    
-</pre>	     
+	      <p>
+					A Kubernetes Secret resource was created and was mounted to a volume in this container.  The kubernetes
+					secret object definition is almost identical to a configmap, with the only notible difference is that the 
+					values of the secret are base64 encoded.  In this application the kubernetes secret object looks like:
+				</p>
+<pre>
+		apiVersion: v1
+		kind: Secret
+		metadata:
+			name: kubetoy-secret-files
+		type: Opaque
+		data:
+			toy-secret.txt: U2hoLi4uIFRoaXMgaXMgYSBzZWNyZXQu
+</pre>
 
-		<p>this definition specifies a file with the name <code>toy-secret.json</code> whose contents 
-		are encoded as a Base64 string in this definition object, but the application reads it as plain 
-		unencoded text.  The current contents of this secret are:</p>
+		<p>
+			The applicaiton however does not have to perform the conversion, the secret is automatically decoded for the 
+			container application.  In this example the secret is:
+		</p>
 		
 <pre class="bg-light">
 <%= secret %>
 </pre>
-		<p>You can verify the encoding with the utility at the bottom of this page.  You can also change 
-		this value with the UI or CLI, and eventually this app will see the updated content.  This usually 
-		takes a few minutes to roll out, so if you refresh often you may see it change, and if you access 
-		a different instance (pod) of the app, you might briefly see the original value.</p>
+		<p>You can also change 
+		this value with the UI or CLI, and eventually this app will see the updated content.  The utility at the bottom
+		of this page will help you manually do the base64 conversions.  As with configmaps changes usually 
+		takes a few minutes to roll out.</p>
 		
 		<hr/>
 

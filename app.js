@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const validFilename = require('valid-filename');
 const fs = require('fs');
-const ping = require('net-ping-hr');
+const ping = require('net-ping');
 const { exec } = require('child_process');
 const util = require('util');
 const sprintf = require("sprintf-js").sprintf;
@@ -10,7 +10,7 @@ const dns = require('dns');
 const { uname } = require('node-uname');
 const sysInfo = uname();
 const sysInfoStr = `Arch: ${sysInfo.machine}, Release: ${sysInfo.release}`
-const appVersion = "1.8.0";
+const appVersion = "1.8.1";
 
 const configFile = "/var/config/config.json";
 const secretFile = "/var/secret/toy-secret.txt";

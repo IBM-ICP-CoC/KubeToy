@@ -6,14 +6,13 @@
 		"start": "node app.js"
 	},
 	"dependencies": {
-		"body-parser": "1.18.*",
+		"body-parser": "1.18.x",
 		"ejs": "^2.5.x",
-		"express": "^4.*",
-		"filename-reserved-regex": "*",
-		"net-ping-hr": "^2.0.x",
+		"express": "^4.x",
+		"net-ping": "^1.2.x",
 		"sprintf-js": "*",
 		"valid-filename": "*",
-		"node-uname": "2.0.*"
+		"node-uname": "2.0.x"
 	},
 	"repository": {}
 }

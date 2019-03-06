@@ -1,18 +1,25 @@
-FROM node:10.7
+FROM node:alpine
 
-RUN apt-get update
 
 RUN mkdir /app
 WORKDIR /app
 
-COPY app.js .
+COPY app.js . 
 COPY LICENSE .
 COPY package.json .
 COPY README.md .
 COPY views ./views
 COPY public ./public
 
-RUN npm install
+RUN apk add --no-cache --virtual .gyp \
+        python \
+        make \
+        g++ \
+    && npm install \
+        body-parser ejs express net-ping sprintf-js valid-filename node-uname \
+    && apk del .gyp
+
+# RUN npm install
 
 EXPOSE 3000
 
