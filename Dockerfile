@@ -16,7 +16,7 @@ RUN apk add --no-cache --virtual .gyp \
         make \
         g++ \
     && npm install \
-        body-parser ejs express net-ping sprintf-js valid-filename node-uname \
+        body-parser ejs express net-ping sprintf-js valid-filename node-uname ibm-cos-sdk formidable\
     && apk del .gyp
 
 # RUN npm install

@@ -35,6 +35,31 @@ spec:
               configMapKeyRef:
                 name: kubetoy-configmap-env
                 key: ENV_TOY_CONFIGMAP
+          - name: APIKEYID
+            valueFrom:
+              configMapKeyRef:
+                name: kubetoy-configmap-env
+                key: APIKEYID
+          - name: IBMAUTHENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: kubetoy-configmap-env
+                key: IBMAUTHENDPOINT
+          - name: SERVICEINSTANCEID
+            valueFrom:
+              configMapKeyRef:
+                name: kubetoy-configmap-env
+                key: SERVICEINSTANCEID
+          - name: BUCKET
+            valueFrom:
+              configMapKeyRef:
+                name: kubetoy-configmap-env
+                key: BUCKET
+          - name: ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: kubetoy-configmap-env
+                key: ENDPOINT
           - name: ENV_TOY_SECRET
             valueFrom:
               secretKeyRef:
