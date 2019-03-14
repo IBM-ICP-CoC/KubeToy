@@ -62,7 +62,7 @@ if (ibmcosconfig.bucket === undefined) {
   ibmcosconfig.bucket = process.env.BUCKET;
   // Let's see if any COS info has been discovered/provided
   // Otherwise, the UI will hide the option
-  if (ibmcosconfig.bucket !== '') {
+  if ((ibmcosconfig.bucket !== '') && (process.env.BUCKET)) {
     objectstore = true;
   }
 }
