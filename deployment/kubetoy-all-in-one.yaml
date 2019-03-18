@@ -5,6 +5,11 @@ metadata:
   name: kubetoy-configmap-env
 data:
   ENV_TOY_CONFIGMAP: 'This is a configuration value.'
+  APIKEYID: 'some-long-string'
+  IBMAUTHENDPOINT: 'https://iam.ng.bluemix.net/oidc/token'
+  SERVICEINSTANCEID: 'crn:v1:bluemix:public:cloud-object-storage:global:a/ae5c212....'
+  BUCKET: ''
+  ENDPOINT: 's3.us-east.cloud-object-storage.appdomain.cloud'
 ---
 apiVersion: v1
 kind: Secret
@@ -29,7 +34,7 @@ type: Opaque
 data:
   toy-secret.txt: U2hoLi4uIFRoaXMgaXMgYSBzZWNyZXQu
 ---
-apiVersion: apps/v1 
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kubetoy
@@ -45,7 +50,7 @@ spec:
       spec:
         containers:
         - name: kubetoy
-          image: ibmicpcoc/kubetoy:latest
+          image: mycluster.icp:8500/kubetoy/kubetoy:latest
           imagePullPolicy: Always
           ports:
           - containerPort: 3000
@@ -62,10 +67,35 @@ spec:
             periodSeconds: 5
           env:
           - name: ENV_TOY_CONFIGMAP
-            valueFrom: 
+            valueFrom:
               configMapKeyRef:
                 name: kubetoy-configmap-env
                 key: ENV_TOY_CONFIGMAP
+          - name: APIKEYID
+            valueFrom:
+              configMapKeyRef:
+                name: kubetoy-configmap-env
+                key: APIKEYID
+          - name: IBMAUTHENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: kubetoy-configmap-env
+                key: IBMAUTHENDPOINT
+          - name: SERVICEINSTANCEID
+            valueFrom:
+              configMapKeyRef:
+                name: kubetoy-configmap-env
+                key: SERVICEINSTANCEID
+          - name: BUCKET
+            valueFrom:
+              configMapKeyRef:
+                name: kubetoy-configmap-env
+                key: BUCKET
+          - name: ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: kubetoy-configmap-env
+                key: ENDPOINT
           - name: ENV_TOY_SECRET
             valueFrom:
               secretKeyRef:

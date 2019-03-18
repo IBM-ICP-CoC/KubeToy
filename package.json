@@ -1,6 +1,6 @@
 {
 	"name": "kubetoy",
-	"version": "1.8.0",
+	"version": "1.8.2",
 	"private": true,
 	"scripts": {
 		"start": "node app.js"
@@ -9,10 +9,12 @@
 		"body-parser": "1.18.x",
 		"ejs": "^2.5.x",
 		"express": "^4.x",
+		"formidable": "^1.2.1",
+		"ibm-cos-sdk": "^1.4.4",
 		"net-ping": "^1.2.x",
+		"node-uname": "2.0.x",
 		"sprintf-js": "*",
-		"valid-filename": "*",
-		"node-uname": "2.0.x"
+		"valid-filename": "*"
 	},
 	"repository": {}
 }
