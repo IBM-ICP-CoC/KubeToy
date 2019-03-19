@@ -14,7 +14,7 @@ spec:
       spec:
         containers:
         - name: kubetoy
-          image: ibmicpcoc/kubetoy:latest
+          image: ibmicpcoc/kubetoy:1.9.0
           imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 3000
@@ -35,37 +35,15 @@ spec:
               configMapKeyRef:
                 name: kubetoy-configmap-env
                 key: ENV_TOY_CONFIGMAP
-          - name: APIKEYID
-            valueFrom:
-              configMapKeyRef:
-                name: kubetoy-configmap-env
-                key: APIKEYID
-          - name: IBMAUTHENDPOINT
-            valueFrom:
-              configMapKeyRef:
-                name: kubetoy-configmap-env
-                key: IBMAUTHENDPOINT
-          - name: SERVICEINSTANCEID
-            valueFrom:
-              configMapKeyRef:
-                name: kubetoy-configmap-env
-                key: SERVICEINSTANCEID
-          - name: BUCKET
-            valueFrom:
-              configMapKeyRef:
-                name: kubetoy-configmap-env
-                key: BUCKET
-          - name: ENDPOINT
-            valueFrom:
-              configMapKeyRef:
-                name: kubetoy-configmap-env
-                key: ENDPOINT
           - name: ENV_TOY_SECRET
             valueFrom:
               secretKeyRef:
                 name: kubetoy-secret-env
                 key: ENV_TOY_SECRET
           volumes:
+            - name: cos-config
+              configMap:
+                name: kubetoy-cos-configmap
             - name: configvol
               configMap:
                 name: kubetoy-configmap-files

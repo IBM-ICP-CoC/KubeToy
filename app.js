@@ -12,7 +12,7 @@ const formidable = require('formidable');
 const { uname } = require('node-uname');
 const sysInfo = uname();
 const sysInfoStr = `Arch: ${sysInfo.machine}, Release: ${sysInfo.release}`
-const appVersion = "1.8.2";
+const appVersion = "1.9.0";
 
 const configFile = "/var/config/config.json";
 const secretFile = "/var/secret/toy-secret.txt";
@@ -34,46 +34,6 @@ if( process.env.HOSTNAME ) {
 	pod = hostname.substring(index+1);
 } 
 
-// Populate Cloud ObjectStorage Credentials
-//load Object Storage (S3) credentials from a file if available
-var ibmcosconfig = {}
-var objectstore = false;
-
-try {
-  ibmcosconfig = require("./cos-credentials.json");
-  if (ibmcosconfig.bucket !== undefined) {
-    objectstore = true;
-  }
-} catch (e) {}
-
-if (ibmcosconfig.apiKeyId === undefined) {
-  ibmcosconfig.apiKeyId = process.env.APIKEYID;
-}
-
-if (ibmcosconfig.ibmAuthEndpoint === undefined) {
-  ibmcosconfig.ibmAuthEndpoint = process.env.IBMAUTHENDPOINT;
-}
-
-if (ibmcosconfig.serviceInstanceId === undefined) {
-  ibmcosconfig.serviceInstanceId = process.env.SERVICEINSTANCEID;
-}
-
-if (ibmcosconfig.bucket === undefined) {
-  ibmcosconfig.bucket = process.env.BUCKET;
-  // Let's see if any COS info has been discovered/provided
-  // Otherwise, the UI will hide the option
-  if ((ibmcosconfig.bucket !== '') && (process.env.BUCKET)) {
-    objectstore = true;
-  }
-}
-
-if (ibmcosconfig.endpoint === undefined) {
-  ibmcosconfig.endpoint = process.env.ENDPOINT;
-}
-
-if (objectstore) {
-  var cos = new ibmcos.S3(ibmcosconfig);
-}
 
 var stressCpu = 5;
 var stressIo = 5;
@@ -93,7 +53,6 @@ function healthStatus(){
 }
 
 var directory = '/var/test';
-
 var filesystem = fs.existsSync(directory);
 
 app.set('port', process.env.PORT || 3000);
@@ -148,7 +107,18 @@ if( filesystem ) {
 	});
 }
 
+// Populate Cloud ObjectStorage Credentials
+//load Object Storage (S3) credentials from a file if available
+var ibmcosconfig = {}
+
+var objectstore = fs.existsSync("/cos-configuration/cos-credentials.json");
+
 if( objectstore ) {
+
+	ibmcosconfig = require("/cos-configuration/cos-credentials.json");
+
+	var cos = new ibmcos.S3(ibmcosconfig);
+
   app.get('/cos', function(req,res){
         items = [];
         //list documents from IBM Cloud Object storage
@@ -162,21 +132,34 @@ if( objectstore ) {
                     items[items.length] = content.Key;
                 });
             }
-            res.render('cos', { "cos": cos, "objectstore": objectstore, "pod": pod, "items":items, "filesystem": filesystem});
+            res.render('cos', { "cos": cos, "objectstore": objectstore, "bucket": ibmcosconfig.bucket, "pod": pod, "items":items, "filesystem": filesystem});
         });
   });
 
-  app.get('/cosshow', function(req,res){
-    var index = req.query.f;
-    var key = req.query.key;
-    var cosGetObjectStream = cos.getObject({
-        Bucket: ibmcosconfig.bucket,
-        Key: key
-    }).createReadStream();
-    cosGetObjectStream.pipe(res);
+  app.get('/cosmeta', function(req,res){
+		var key = req.query.key;
+		var obj = cos.getObject({
+			Bucket: ibmcosconfig.bucket,
+			Key: key
+		}, function(err,data){
+			console.log( "Metadata: " + JSON.stringify(data.Metadata) );
+			res.send(JSON.stringify(data.Metadata));
+		});
+    
   });
 
-  app.post('/cosdel', function(req,res){
+  app.get('/cosshow', function(req,res){
+    //var index = req.query.f;
+		var key = req.query.key;
+		var cosGetObjectStream = cos.getObject({
+			Bucket: ibmcosconfig.bucket,
+			Key: key
+		}).createReadStream();
+		cosGetObjectStream.pipe(res);
+	
+  });
+
+  app.get('/cosdel', function(req,res){
       var key = req.query.key;
       cos.deleteObject({
         Bucket: ibmcosconfig.bucket,
@@ -188,19 +171,37 @@ if( objectstore ) {
         res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
         res.redirect('cos');
       });
-  });
+	});
+	
+	function parseMetadata(values){
+		var re = /^[a-zA-Z][\w-]*$/g;
+		var metadata = {};
+		if( typeof values === 'string' ){
+			var data = values.split('\n');
+			for(var i=0;i<data.length;i++ ){
+				var line = data[i].trim();
+				var kv = line.split(':');
+				if( kv.length == 2 ) {
+					var k = kv[0].trim();
+					if( k.match(re) ) {
+						metadata[k]= kv[1].trim();
+					}
+				}
+			}
+		}
+		return metadata;
+	}
 
   app.post('/cos', function(req,res){
-    var filename = req.body.filename;
-    var filepath = "";
+		var filename = req.body.filename;
     if( validFilename( filename ) ){
       var content = req.body.content;
-      console.log( 'creating file: ' + filename );
-      console.log( 'target bucket: ' + ibmcosconfig.bucket);
+			var metadata = parseMetadata(req.body.metadata);
       cos.putObject({
           Bucket: ibmcosconfig.bucket,
           Key: filename,
-          Body: content
+					Body: content,
+					Metadata: metadata
       },function(err, data) {
         if (err) {
           console.log(err);
@@ -213,11 +214,13 @@ if( objectstore ) {
       // Putting the file into COS
       // After parse ... need to redirect/refresh page
       form.parse(req, function(err, fields, files) {
-        if (err) next(err);
+				if (err) next(err);
+				var metadata = parseMetadata(fields.metadata);
         cos.putObject({
             Bucket: ibmcosconfig.bucket,
             Key: files.chosenfilename.name,
-            Body: fs.createReadStream(files.chosenfilename.path)
+            Body: fs.createReadStream(files.chosenfilename.path),
+						Metadata: metadata
         },function(err, data) {
           if (err) {
             console.log(err);
@@ -225,15 +228,7 @@ if( objectstore ) {
           res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
           res.redirect('cos');
         });
-        /*
-        res.writeHead(200, {'content-type': 'text/plain'});
-        res.write('received upload:\n\n');
-        res.end(util.inspect({fields: fields, files: files}));
-        */
       });
-      //var pretty ='Invalid filename: "' + filename + '"';
-      //console.error(pretty);
-      //res.render('error', { "pod": pod, "filesystem": filesystem, "msg": pretty , "objectstore": objectstore});
     };
 
   });
