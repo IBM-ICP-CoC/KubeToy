@@ -34,13 +34,6 @@ if( process.env.HOSTNAME ) {
 	pod = hostname.substring(index+1);
 } 
 
-
-var stressCpu = 5;
-var stressIo = 5;
-var stressVm = 5;
-var stressVmBytes = "1024M";
-var stressTimeout = 10;
-var pid;
 var healthy = true;
 var duckImage = "duck.png";
 
@@ -53,22 +46,24 @@ function healthStatus(){
 }
 
 var directory = '/var/test';
-var filesystem = fs.existsSync(directory);
+function usingFilesystem(){
+	return fs.existsSync(directory);
+}
 
 app.set('port', process.env.PORT || 3000);
 
-if( filesystem ) {
+if( usingFilesystem() ) {
 	app.get('/files', function(req,res){
 		fs.readdir(directory, function(err, items) {
 			if( err ) {
 				var pretty = JSON.stringify(err,null,4);
 				  console.error(pretty);
-				  res.render('error', { "pod": pod, "filesystem": filesystem, "msg": pretty, "objectstore": objectstore });
+				  res.render('error', { "pod": pod, "filesystem": usingFilesystem(), "msg": pretty, "objectstore": objectstore });
 			} else {
 				if( !items ) {
 					items = [];
 				}
-				res.render('files', { "pod": pod, "items": items, "filesystem": filesystem, "directory": directory, "objectstore": objectstore });
+				res.render('files', { "pod": pod, "items": items, "filesystem": usingFilesystem(), "directory": directory, "objectstore": objectstore });
 			}
 		});
 	});
@@ -94,7 +89,7 @@ if( filesystem ) {
 				  if (err) {
 					  var pretty = JSON.stringify(err,null,4);
 					  console.error(pretty);
-					  res.render('error', { "pod": pod, "filesystem": filesystem, "msg": pretty, "objectstore": objectstore });
+					  res.render('error', { "pod": pod, "filesystem": usingFilesystem(), "msg": pretty, "objectstore": objectstore });
 				  } else{
 					  res.redirect('files');
 				  }
@@ -102,7 +97,7 @@ if( filesystem ) {
 		} else {
 			var pretty ='Invalid filename: "' + filename + '"';
 			console.error(pretty);
-			res.render('error', { "pod": pod, "filesystem": filesystem, "msg": pretty, "objectstore": objectstore });
+			res.render('error', { "pod": pod, "filesystem": usingFilesystem(), "msg": pretty, "objectstore": objectstore });
 		}
 	});
 }
@@ -132,7 +127,7 @@ if( objectstore ) {
                     items[items.length] = content.Key;
                 });
             }
-            res.render('cos', { "cos": cos, "objectstore": objectstore, "bucket": ibmcosconfig.bucket, "pod": pod, "items":items, "filesystem": filesystem});
+            res.render('cos', { "cos": cos, "objectstore": objectstore, "bucket": ibmcosconfig.bucket, "pod": pod, "items":items, "filesystem": usingFilesystem()});
         });
   });
 
@@ -474,7 +469,7 @@ app.get('/config',
 		}
 		var prettyEnv = JSON.stringify(process.env,null,4);
 		
-		res.render('config', {"pod": pod, "pretty": prettyEnv, "filesystem": filesystem, "config": config, "secret": secret, "objectstore": objectstore });
+		res.render('config', {"pod": pod, "pretty": prettyEnv, "filesystem": usingFilesystem(), "config": config, "secret": secret, "objectstore": objectstore });
 	}
 );
 
@@ -482,7 +477,7 @@ app.get('/config',
 app.get('/home',  
 	function(req, res) {
 		var status = healthStatus();
-		res.render('home', {"pod": pod, "duckImage": duckImage, "healthStatus": status, "filesystem": filesystem, "version": appVersion, "sysInfoStr": sysInfoStr, "objectstore": objectstore });
+		res.render('home', {"pod": pod, "duckImage": duckImage, "healthStatus": status, "filesystem": usingFilesystem(), "version": appVersion, "sysInfoStr": sysInfoStr, "objectstore": objectstore });
 	}
 );
 
