@@ -271,7 +271,7 @@ app.post('/dns', function(req,res){
 			if( err ) {
 				var args = { 
 						"pod": pod, 
-						"filesystem": filesystem, 
+						"filesystem": usingFilesystem(), 
 						"pingResponse": "",
 						"pingHost": "",
 						"pingActive": "",
@@ -295,7 +295,7 @@ app.post('/dns', function(req,res){
 				
 				var args = { 
 						"pod": pod, 
-						"filesystem": filesystem, 
+						"filesystem": usingFilesystem(), 
 						"pingResponse": "",
 						"pingHost": "",
 						"pingActive": "",
@@ -318,7 +318,7 @@ app.post('/ping', function(req,res){
 		var message = "Please provide a host name or IP";
 		var args = { 
 				"pod": pod, 
-				"filesystem": filesystem, 
+				"filesystem": usingFilesystem(), 
 				"pingResponse": message,
 				"pingHost": host,
 				"pingActive": "active",
