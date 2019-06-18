@@ -12,7 +12,7 @@ const formidable = require('formidable');
 const { uname } = require('node-uname');
 const sysInfo = uname();
 const sysInfoStr = `Arch: ${sysInfo.machine}, Release: ${sysInfo.release}`
-const appVersion = "1.9.0";
+const appVersion = "1.9.1";
 
 const configFile = "/var/config/config.json";
 const secretFile = "/var/secret/toy-secret.txt";
@@ -246,14 +246,14 @@ app.post('/dns', function(req,res){
 		var message = "Please provide a host name or IP";
 		var args = { 
 				"pod": pod, 
-				"filesystem": filesystem, 
+				"filesystem": usingFilesystem(), 
 				"pingResponse": "",
 				"pingHost": "",
 				"pingActive": "",
 				"dnsResponse": message,
 				"dnsHost": host,
-        "dnsActive": "active",
-        "objectstore": objectstore
+				"dnsActive": "active",
+				"objectstore": objectstore
 			};
 		
 		res.render('network', args);
@@ -346,7 +346,7 @@ app.post('/ping', function(req,res){
 		if( err ) {
 			var args = { 
 					"pod": pod, 
-					"filesystem": filesystem, 
+					"filesystem": usingFilesystem(), 
 					"pingResponse": err,
 					"pingHost": host,
 					"pingActive": "active",
@@ -369,7 +369,7 @@ app.post('/ping', function(req,res){
 			    }
 				var args = { 
 						"pod": pod, 
-						"filesystem": filesystem, 
+						"filesystem": usingFilesystem(), 
 						"pingResponse": message,
 						"pingHost": host,
 						"pingActive": "active",
@@ -388,7 +388,7 @@ app.post('/ping', function(req,res){
 app.get('/network', function(req,res){
 	var args = { 
 			"pod": pod, 
-			"filesystem": filesystem, 
+			"filesystem": usingFilesystem(), 
 			"pingResponse": "",
 			"pingHost": "",
 			"pingActive": "",

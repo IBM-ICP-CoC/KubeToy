@@ -61,11 +61,14 @@
 		</div>
 	<div class="col-sm">
 		<form class="form-inline" method="POST" action="health">
-				<p><%= healthStatus %></p> &nbsp; <button type="submit" id="health" class="btn btn-primary mb-2">Toggle Health</button>
+			<p>
+				<button type="submit" id="health" class="btn btn-primary mb-2">Toggle Health</button> 
+				(<%= healthStatus %>)
+			</p>
 		</form>
 		<form class="form-inline" method="GET" action="mutate">
 			<button type="submit" class="btn btn-success mb-2">Mutate</button>
-	</form>
+		</form>
 
 	</div>
 </div>

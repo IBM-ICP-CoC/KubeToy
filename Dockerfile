@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:9-alpine
 
 
 RUN mkdir /app
@@ -11,13 +11,20 @@ COPY README.md .
 COPY views ./views
 COPY public ./public
 
-RUN apk add --no-cache --virtual .gyp \
-        python \
-        make \
-        g++ \
+RUN apk --no-cache --virtual build-dependencies add \
+    python \
+    make \
+    g++ \
     && npm install \
-        body-parser ejs express net-ping sprintf-js valid-filename node-uname ibm-cos-sdk formidable\
-    && apk del .gyp
+    && apk del build-dependencies
+
+# RUN apk add --no-cache --virtual .gyp \
+#         python \
+#         make \
+#         g++ \
+#     && npm install \
+#         body-parser ejs express net-ping sprintf-js valid-filename node-uname ibm-cos-sdk formidable\
+#     && apk del .gyp
 
 # RUN npm install
 
