@@ -124,14 +124,12 @@ objects:
   kind: PersistentVolumeClaim
   metadata:
     name: kubetoy-pvc
-    annotations:
-      volume.beta.kubernetes.io/storage-class: managed-nfs-storage
   spec:
     accessModes:
       - ReadWriteMany
     resources:
       requests:
-        storage: 1Gi
+        storage: 1Mi
 parameters:
 - name: ROUTE
   description: Route
