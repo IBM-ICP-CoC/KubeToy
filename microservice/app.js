@@ -6,7 +6,7 @@ let pod = process.env.HOSTNAME || 'unknown-pod';
 
 app.get('/', function(request, response) {
   let randomColor = getRandomColor(); // <-- comment this
-  // let randomColor = getRandomGrayScaleColor(); // <-- uncomment this
+  //let randomColor = getRandomGrayScaleColor(); // <-- uncomment this
 
   response.writeHead(200, {'Content-Type': 'application/json'});
   response.end(JSON.stringify({
@@ -28,6 +28,24 @@ function getRandomGrayScaleColor() {
       grayscale = (value << 16) | (value << 8) | value;
   return '#' + grayscale.toString(16);
 }
+
+app.get('/hpa', function(request, response){
+
+  console.time('mySlowFunction');
+  let result = 0;
+  let baseNumber = 17; //change this to make it slower or faster by increasing/decreasing this number  
+  for (var i = Math.pow(baseNumber, 6); i >= 0; i--) {    
+    result += Math.atan(i) * Math.tan(i);
+  };
+
+  response.writeHead(200, {'Content-Type': 'application/json'});
+  response.end(JSON.stringify({
+    'status': 'OK'
+  }));
+
+  console.timeEnd('mySlowFunction');
+
+});
 
 app.listen(app.get('port'), '0.0.0.0', function() {
   console.log(pod + ': microservice starting on port ' + app.get('port'));

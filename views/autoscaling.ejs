@@ -1,0 +1,118 @@
+<%- include('templates/header.ejs'); %>
+
+<%- include('templates/nav.ejs', {page: 'autoscaling'}); %>
+
+<div class="blank-slate-pf container-pf-nav-pf-vertical">
+	<h1>
+		<span class="fa fa-cubes small"></span>
+		Autoscaling
+	</h1>
+
+	<div class="row">
+		<p class="col-lg-6 mb-5">
+			OpenShift being Kubernetes can automatically scale up the number of pods in order to handle
+			an increase in traffic or workload by utilizing the
+			<a href="https://docs.openshift.com/container-platform/3.11/dev_guide/pod_autoscaling.html#hpa-supported-metrics" target="_blank">
+				Horizontal Pod Autoscaler <span class="fa fa-external-link-alt small"></span>
+			</a>. Autoscaling can be set by CPU utilization or Memory utilization.
+		</p>
+	</div>
+
+	<div class="row row-cards-pf">
+		<div class="col-lg-6 microservice hide">
+			<div class="card-pf card-pf-view">
+				<div class="card-pf-body">
+					<div class="row">
+						<div class="col-xs-7">
+							<h2 class="card-pf-title mb-3">
+								<!--<span class="fa fa-satellite-dish"></span>-->
+								AutoScaling
+							</h2>
+							<p>
+								As was in the Networking section this list of <em>Remote Pods</em> increases or decreases dynamically based on the number
+								of microservice Pods running. You can
+								<a onclick="createLoad()" href="javascript:void(0);">
+									increase the load </a>
+								 (please click only once) on the microservice and watch how the number of pods scale up here. The number of pods can also be seen from the CLI or within the web console.
+							</p>
+						</div>
+						<div class="col-xs-5">
+							<h2 class="card-pf-title mb-3">
+								Remote Pods
+							</h2>
+							<ul id="cluster-pods"></ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div><!-- /container -->
+
+<%- include('templates/footer.ejs', {excludeClosingTags: true}); %>
+
+<script type="text/javascript">
+$(document).ready(function() {
+//	updateColors();
+	setInterval(updateColors,1000);
+
+});
+
+function createLoad() {
+	if (window.my_time_loop === undefined) {
+		window.my_time_loop = 0;
+	} else {
+		window.my_time_loop += 1;
+	}
+	
+	$.get('/hpa');
+	
+	if (window.my_time_loop == 15) {
+		return;
+	} else {
+		setTimeout(createLoad, 2500);
+	}
+};
+
+function updateColors() {
+	var clusterPods = $('#cluster-pods'),
+		podItems = clusterPods.find('li');
+
+	$.get('/network/colors?timestamp=' + $.now(), function(data) {
+		if (data !== undefined && data.hasOwnProperty('pod') && data.hasOwnProperty('color')) {
+			var li = $('#' + data.pod);
+			if (li.length > 0) {
+				// update
+				li.replaceWith('<li id="' + data.pod + '" data-timestamp="' + $.now() + '"><div style="padding: 10px; background-color: ' + data.color + '">' + data.pod + '</div></li>');
+			} else {
+				// create
+				clusterPods.append('<li id="' + data.pod + '" data-timestamp="' + $.now() + '"><div style="padding: 10px; background-color: ' + data.color + '">' + data.pod + '</div></li>');
+			}
+		}
+	});
+
+	if (podItems.length === 0) {
+		clusterPods.parents('div.microservice').addClass('hide');
+	} else {
+		clusterPods.parents('div.microservice').removeClass('hide');
+		// matchHeight the contents of each .card-pf and then the .card-pf itself
+		$(".row-cards-pf > [class*='col'] > .card-pf .card-pf-title").matchHeight();
+		$(".row-cards-pf > [class*='col'] > .card-pf > .card-pf-body").matchHeight();
+		$(".row-cards-pf > [class*='col'] > .card-pf > .card-pf-footer").matchHeight();
+		$(".row-cards-pf > [class*='col'] > .card-pf").matchHeight();
+		clusterPods.find('li').each(function () {
+			var currLi = $(this);
+			// Remove <li> elements older than 10 seconds
+			if (Date.now() - new Date(currLi.data('timestamp')) >= 10000) {
+				currLi.remove();
+			}
+		});
+	}
+
+	//setTimeout(updateColors, 1000);
+}
+</script>
+
+</body>
+</html>

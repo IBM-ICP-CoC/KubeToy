@@ -8,7 +8,7 @@ const path = require('path');
 const fs = require('fs');
 const http = require('http');
 const dns = require('dns');
-const appVersion = '1.2.2';
+const appVersion = '1.3';
 
 
 /*
@@ -261,8 +261,38 @@ app.get('/env-variables', function(request, response) {
 
 
 /*
-  NETWORKING URLS/FUNCTIONS
+  Horizontal Pod Autoscaler URLS/FUNCTIONS.
  */
+
+app.get('/autoscaling', function(request, response) {
+  response.render('autoscaling');
+});
+
+
+app.get('/hpa', function(request, response) {
+    let options = {
+        host: serviceIP,
+        port: servicePort,
+        path: '/hpa',
+        method: 'GET'
+      },
+      errMessage = 'microservice endpoint not available';
+
+  http.request(options, function(httpResponse) {
+      return;
+  }).on('error', function () {
+    console.error(errMessage);
+    response.json(errMessage);
+  }).end();
+  
+  response.writeHead(200);
+  response.end('done');
+});
+
+/*
+  NETWORKING URLS/FUNCTIONS.
+ */
+
 app.get('/network', function(request, response) {
   response.render('network');
 });
