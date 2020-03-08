@@ -100,7 +100,7 @@ spec:
             containers:
             - name: kubetoy
               image: docker.io/ibmicpcoc/kubetoy:2.0.0
-              imagePullPolicy: IfNotPresent
+              imagePullPolicy: Always
               ports:
               - containerPort: 3000
               volumeMounts:
