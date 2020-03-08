@@ -99,7 +99,7 @@ spec:
           spec:
             containers:
             - name: kubetoy
-              image: docker.io/ibmicpcoc/kubetoy:latest
+              image: docker.io/ibmicpcoc/kubetoy:2.0.0
               imagePullPolicy: IfNotPresent
               ports:
               - containerPort: 3000
