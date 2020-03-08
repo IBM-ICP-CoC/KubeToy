@@ -2,17 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const validFilename = require('valid-filename');
 const fs = require('fs');
-const ping = require('net-ping');
 const { exec } = require('child_process');
-const util = require('util');
-const sprintf = require("sprintf-js").sprintf;
 const dns = require('dns');
 const ibmcos = require('ibm-cos-sdk');
 const formidable = require('formidable');
 const { uname } = require('node-uname');
 const sysInfo = uname();
 const sysInfoStr = `Arch: ${sysInfo.machine}, Release: ${sysInfo.release}`
-const appVersion = "1.9.1";
+const appVersion = "2.0.0";
 
 const configFile = "/var/config/config.json";
 const secretFile = "/var/secret/toy-secret.txt";
@@ -238,167 +235,6 @@ app.get('/mutate', function(req,res){
 	res.redirect('home');
 });
 
-
-app.post('/dns', function(req,res){
-	var host = req.body.dnsHost;
-	
-	if( !host ) {
-		var message = "Please provide a host name or IP";
-		var args = { 
-				"pod": pod, 
-				"filesystem": usingFilesystem(), 
-				"pingResponse": "",
-				"pingHost": "",
-				"pingActive": "",
-				"dnsResponse": message,
-				"dnsHost": host,
-				"dnsActive": "active",
-				"objectstore": objectstore
-			};
-		
-		res.render('network', args);
-	} else {
-		// ping options
-		var options = {
-		    networkProtocol: ping.NetworkProtocol.IPv4,
-		    packetSize: 16,
-		    retries: 1,
-		    timeout: 2000,
-		    ttl: 128
-		};
-		
-		dns.resolve4(host, function(err,addresses){
-			if( err ) {
-				var args = { 
-						"pod": pod, 
-						"filesystem": usingFilesystem(), 
-						"pingResponse": "",
-						"pingHost": "",
-						"pingActive": "",
-						"dnsResponse": err,
-						"dnsHost": host,
-            "dnsActive": "active",
-            "objectstore": objectstore
-					};
-				
-				res.render('network', args);
-			} else {
-				console.log( addresses );
-				var addrList = '';
-				for(var i=0;i<addresses.length;i++){
-					if( i>1 ) {
-						addrList += '\n'+addresses[i];
-					} else {
-						addrList += addresses[i];
-					}
-				}
-				
-				var args = { 
-						"pod": pod, 
-						"filesystem": usingFilesystem(), 
-						"pingResponse": "",
-						"pingHost": "",
-						"pingActive": "",
-						"dnsResponse": addrList,
-						"dnsHost": host,
-            "dnsActive": "active",
-            "objectstore": objectstore
-					};
-				res.render('network', args);
-			}
-		});
-	}
-});
-
-
-app.post('/ping', function(req,res){
-	var host = req.body.pingHost;
-	
-	if( !host ) {
-		var message = "Please provide a host name or IP";
-		var args = { 
-				"pod": pod, 
-				"filesystem": usingFilesystem(), 
-				"pingResponse": message,
-				"pingHost": host,
-				"pingActive": "active",
-				"dnsResponse": "",
-				"dnsHost": "",
-        "dnsActive": "",
-        "objectstore": objectstore
-			};
-		res.render('network', args);
-	}
-	
-	// ping options
-	var options = {
-	    networkProtocol: ping.NetworkProtocol.IPv4,
-	    packetSize: 16,
-	    retries: 1,
-	    timeout: 2000,
-	    ttl: 128
-	};
-	
-	var session = ping.createSession(options);
-	
-	dns.resolve4(host, function(err,addresses){
-		
-		if( err ) {
-			var args = { 
-					"pod": pod, 
-					"filesystem": usingFilesystem(), 
-					"pingResponse": err,
-					"pingHost": host,
-					"pingActive": "active",
-					"dnsResponse": "",
-					"dnsHost": "",
-          "dnsActive": "",
-          "objectstore": objectstore
-				};
-			res.render('network', args);
-		} else {
-			console.log( addresses );
-			var ip = addresses[0];
-			session.pingHost(ip, function(error, ip) {
-				var message;
-			    if (error){
-			    	message = ip + ": " + error;
-			    }
-			    else {
-			    	message = ip + ": Alive";
-			    }
-				var args = { 
-						"pod": pod, 
-						"filesystem": usingFilesystem(), 
-						"pingResponse": message,
-						"pingHost": host,
-						"pingActive": "active",
-						"dnsResponse": "",
-						"dnsHost": "",
-            "dnsActive": "",
-            "objectstore": objectstore
-					};
-				res.render('network', args);
-			});
-		}
-	});
-});
-
-
-app.get('/network', function(req,res){
-	var args = { 
-			"pod": pod, 
-			"filesystem": usingFilesystem(), 
-			"pingResponse": "",
-			"pingHost": "",
-			"pingActive": "",
-			"dnsResponse": "",
-			"dnsHost": "",
-      "dnsActive": "active",
-      "objectstore": objectstore
-		};
-	res.render('network', args);
-});
 
 
 app.get('/logit', function(req,res){

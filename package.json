@@ -1,6 +1,6 @@
 {
 	"name": "kubetoy",
-	"version": "1.9.1",
+	"version": "2.0.0",
 	"private": true,
 	"scripts": {
 		"start": "node app.js"
@@ -11,7 +11,6 @@
 		"express": "^4.x",
 		"formidable": "^1.2.1",
 		"ibm-cos-sdk": "^1.4.4",
-		"net-ping": "^1.2.x",
 		"node-uname": "2.0.x",
 		"sprintf-js": "*",
 		"valid-filename": "*"

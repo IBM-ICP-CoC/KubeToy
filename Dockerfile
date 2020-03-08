@@ -15,6 +15,7 @@ RUN apk --no-cache --virtual build-dependencies add \
     make \
     g++ \
     && npm install \
+    && npm audit fix \
     && apk del build-dependencies
 
 EXPOSE 3000
