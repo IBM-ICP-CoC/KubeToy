@@ -170,7 +170,7 @@ spec:
     kind: Route
     apiVersion: route.openshift.io/v1
     metadata:
-      name: kt
+      name: kubetoy
       labels:
         app: kubetoy-app
     spec:
