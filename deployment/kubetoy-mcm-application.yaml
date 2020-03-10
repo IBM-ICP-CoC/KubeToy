@@ -192,6 +192,7 @@ metadata:
     app: kubetoy-app
 spec:
   template:
+    spec: {}
     kind: ConfigMap
     apiVersion: v1
     metadata:
@@ -208,6 +209,7 @@ metadata:
     app: kubetoy-app
 spec:
   template:
+    spec: {}
     apiVersion: v1
     kind: Secret
     metadata:
@@ -225,6 +227,7 @@ metadata:
     app: kubetoy-app
 spec:
   template:
+    spec: {}
     kind: ConfigMap
     apiVersion: v1
     metadata:
@@ -241,6 +244,7 @@ metadata:
     app: kubetoy-app
 spec:
   template:
+    spec: {}
     apiVersion: v1
     kind: Secret
     metadata:
