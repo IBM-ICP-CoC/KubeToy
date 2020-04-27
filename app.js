@@ -6,7 +6,7 @@ const { exec } = require('child_process');
 const { uname } = require('node-uname');
 const sysInfo = uname();
 const sysInfoStr = `Arch: ${sysInfo.machine}, Release: ${sysInfo.release}`
-const appVersion = "2.0.0";
+const appVersion = "2.5.0";
 
 const configFile = "/var/config/config.json";
 const secretFile = "/var/secret/toy-secret.txt";
@@ -97,15 +97,20 @@ if( usingFilesystem() ) {
 }
 
 function toIntVal(str, min, max, def){
-    
+
 }
 
 app.post('/stress', function(req,res){
-    var cpu = Number(req.body.cpu);
-    var io = Number(req.body.io);
-    var vm = Number(req.body.vm);
-    var vmb = Number(req.body.vmb);
-    var timeout = Number(req.body.timeout);
+    var cpu = parseInt(req.body.cpu);
+    if( typeof cpu == 'NaN' || cpu < 0 || cpu > 16 ) cpu = 8;
+    var io = parseInt(req.body.io);
+    if( typeof io == 'NaN' || io < 0 || io > 8 ) io = 2;
+    var vm = parseInt(req.body.vm);
+    if( typeof vm == 'NaN' || vm < 0 || vm > 8 ) vm = 2;
+    var vmb = parseInt(req.body.vmb);
+    if( typeof vmb == 'NaN' || vmb < 0 || vmb > 1028 ) vmb = 128;
+    var timeout = parseInt(req.body.timeout);
+    if( typeof timeout == 'NaN' || timeout < 1 || timeout > 120 ) vmb = 20;
 	console.log('STRESS: --cpu ' + cpu + ' --io ' + io + ' --vm ' + vm + ' --vm-bytes ' + vmb + ' --timeout ' + timeout);
 	res.redirect('home');
 });
