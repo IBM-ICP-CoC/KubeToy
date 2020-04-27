@@ -114,6 +114,13 @@ spec:
                   port: 3000
                 initialDelaySeconds: 10
                 periodSeconds: 5
+                  resources:
+              requests:
+                memory: "30Mi"
+                cpu: "1m"
+              limits:
+                memory: "60Mi"
+                cpu: "2m"
               env:
               - name: ENV_TOY_CONFIGMAP
                 valueFrom: 

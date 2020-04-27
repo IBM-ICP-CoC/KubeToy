@@ -3,9 +3,6 @@ const bodyParser = require('body-parser');
 const validFilename = require('valid-filename');
 const fs = require('fs');
 const { exec } = require('child_process');
-const dns = require('dns');
-const ibmcos = require('ibm-cos-sdk');
-const formidable = require('formidable');
 const { uname } = require('node-uname');
 const sysInfo = uname();
 const sysInfoStr = `Arch: ${sysInfo.machine}, Release: ${sysInfo.release}`
@@ -99,132 +96,19 @@ if( usingFilesystem() ) {
 	});
 }
 
-// Populate Cloud ObjectStorage Credentials
-//load Object Storage (S3) credentials from a file if available
-var ibmcosconfig = {}
-
-var objectstore = fs.existsSync("/cos-configuration/cos-credentials.json");
-
-if( objectstore ) {
-
-	ibmcosconfig = require("/cos-configuration/cos-credentials.json");
-
-	var cos = new ibmcos.S3(ibmcosconfig);
-
-  app.get('/cos', function(req,res){
-        items = [];
-        //list documents from IBM Cloud Object storage
-        cos.listObjects({
-          Bucket: ibmcosconfig.bucket
-        }, function(err, data) {
-            if (err) {
-                console.log(err.extendedRequstId);
-            } else if (data && data.Contents) {
-                data.Contents.forEach(function(content) {
-                    items[items.length] = content.Key;
-                });
-            }
-            res.render('cos', { "cos": cos, "objectstore": objectstore, "bucket": ibmcosconfig.bucket, "pod": pod, "items":items, "filesystem": usingFilesystem()});
-        });
-  });
-
-  app.get('/cosmeta', function(req,res){
-		var key = req.query.key;
-		var obj = cos.getObject({
-			Bucket: ibmcosconfig.bucket,
-			Key: key
-		}, function(err,data){
-			console.log( "Metadata: " + JSON.stringify(data.Metadata) );
-			res.send(JSON.stringify(data.Metadata));
-		});
+function toIntVal(str, min, max, def){
     
-  });
+}
 
-  app.get('/cosshow', function(req,res){
-    //var index = req.query.f;
-		var key = req.query.key;
-		var cosGetObjectStream = cos.getObject({
-			Bucket: ibmcosconfig.bucket,
-			Key: key
-		}).createReadStream();
-		cosGetObjectStream.pipe(res);
-	
-  });
-
-  app.get('/cosdel', function(req,res){
-      var key = req.query.key;
-      cos.deleteObject({
-        Bucket: ibmcosconfig.bucket,
-        Key: key
-      },function(err, data) {
-        if (err) {
-          console.log(err);
-        }
-        res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
-        res.redirect('cos');
-      });
-	});
-	
-	function parseMetadata(values){
-		var re = /^[a-zA-Z][\w-]*$/g;
-		var metadata = {};
-		if( typeof values === 'string' ){
-			var data = values.split('\n');
-			for(var i=0;i<data.length;i++ ){
-				var line = data[i].trim();
-				var kv = line.split(':');
-				if( kv.length == 2 ) {
-					var k = kv[0].trim();
-					if( k.match(re) ) {
-						metadata[k]= kv[1].trim();
-					}
-				}
-			}
-		}
-		return metadata;
-	}
-
-  app.post('/cos', function(req,res){
-		var filename = req.body.filename;
-    if( validFilename( filename ) ){
-      var content = req.body.content;
-			var metadata = parseMetadata(req.body.metadata);
-      cos.putObject({
-          Bucket: ibmcosconfig.bucket,
-          Key: filename,
-					Body: content,
-					Metadata: metadata
-      },function(err, data) {
-        if (err) {
-          console.log(err);
-        }
-        res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
-        res.redirect('cos');
-      });
-    } else {
-      var form = new formidable.IncomingForm();
-      // Putting the file into COS
-      // After parse ... need to redirect/refresh page
-      form.parse(req, function(err, fields, files) {
-				if (err) next(err);
-				var metadata = parseMetadata(fields.metadata);
-        cos.putObject({
-            Bucket: ibmcosconfig.bucket,
-            Key: files.chosenfilename.name,
-            Body: fs.createReadStream(files.chosenfilename.path),
-						Metadata: metadata
-        },function(err, data) {
-          if (err) {
-            console.log(err);
-          }
-          res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
-          res.redirect('cos');
-        });
-      });
-    };
-
-  });
-};
+app.post('/stress', function(req,res){
+    var cpu = Number(req.body.cpu);
+    var io = Number(req.body.io);
+    var vm = Number(req.body.vm);
+    var vmb = Number(req.body.vmb);
+    var timeout = Number(req.body.timeout);
+	console.log('STRESS: --cpu ' + cpu + ' --io ' + io + ' --vm ' + vm + ' --vm-bytes ' + vmb + ' --timeout ' + timeout);
+	res.redirect('home');
+});
 
 app.get('/mutate', function(req,res){
 	console.log("mutating");
@@ -305,7 +189,7 @@ app.get('/config',
 		}
 		var prettyEnv = JSON.stringify(process.env,null,4);
 		
-		res.render('config', {"pod": pod, "pretty": prettyEnv, "filesystem": usingFilesystem(), "config": config, "secret": secret, "objectstore": objectstore });
+		res.render('config', {"pod": pod, "pretty": prettyEnv, "filesystem": usingFilesystem(), "config": config, "secret": secret });
 	}
 );
 
@@ -313,7 +197,7 @@ app.get('/config',
 app.get('/home',  
 	function(req, res) {
 		var status = healthStatus();
-		res.render('home', {"pod": pod, "duckImage": duckImage, "healthStatus": status, "filesystem": usingFilesystem(), "version": appVersion, "sysInfoStr": sysInfoStr, "objectstore": objectstore });
+		res.render('home', {"pod": pod, "duckImage": duckImage, "healthStatus": status, "filesystem": usingFilesystem(), "version": appVersion, "sysInfoStr": sysInfoStr });
 	}
 );
 

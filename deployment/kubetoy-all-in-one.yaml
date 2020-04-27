@@ -17,13 +17,6 @@ spec:
         containers:
         - name: kubetoy
           image: docker.io/ibmicpcoc/kubetoy:latest
-          resources:
-          requests:
-            memory: "64Mi"
-            cpu: "250m"
-          limits:
-            memory: "128Mi"
-            cpu: "1"
           imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 3000
