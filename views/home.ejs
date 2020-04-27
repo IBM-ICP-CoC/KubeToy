@@ -76,6 +76,9 @@
 	<div class="col-md-5">
         <form method="POST" action="stress">
             <div class="form-row">
+                <p>Linux <a href="https://linux.die.net/man/1/stress" target="_blank">stress</a></p>
+            </div>
+            <div class="form-row">
                 <div class="form-group col-md-3">
                     <label for="cpu">CPU workers</label>
                     <input type="text" class="form-control" name="cpu" id="cpu" value="8">
@@ -98,7 +101,7 @@
             <div class="form-row">
                 <div class="form-group col-md-4">
                     <label for="timeout">Timeout (sec)</label>
-                    <input type="text" class="form-control" name="timeout" id="timeout" value="20">
+                    <input type="text" class="form-control" name="timeout" id="timeout" value="10">
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">Stress Test</button>

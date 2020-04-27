@@ -96,10 +96,6 @@ if( usingFilesystem() ) {
 	});
 }
 
-function toIntVal(str, min, max, def){
-
-}
-
 app.post('/stress', function(req,res){
     var cpu = parseInt(req.body.cpu);
     if( typeof cpu == 'NaN' || cpu < 0 || cpu > 16 ) cpu = 8;
@@ -110,8 +106,9 @@ app.post('/stress', function(req,res){
     var vmb = parseInt(req.body.vmb);
     if( typeof vmb == 'NaN' || vmb < 0 || vmb > 1028 ) vmb = 128;
     var timeout = parseInt(req.body.timeout);
-    if( typeof timeout == 'NaN' || timeout < 1 || timeout > 120 ) vmb = 20;
-	console.log('STRESS: --cpu ' + cpu + ' --io ' + io + ' --vm ' + vm + ' --vm-bytes ' + vmb + ' --timeout ' + timeout);
+    if( typeof timeout == 'NaN' || timeout < 1 || timeout > 120 ) timeout = 10;
+	var cmd = 'stress --cpu ' + cpu + ' --io ' + io + ' --vm ' + vm + ' --vm-bytes ' + vmb + ' --timeout ' + timeout;
+    exec(cmd);
 	res.redirect('home');
 });
 
