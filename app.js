@@ -103,10 +103,10 @@ app.post('/stress', function(req,res){
     if( typeof cpu != 'NaN' ) cmd += ' --cpu ' + cpu;
 
     var io = parseInt(req.body.io);
-    if( typeof io == 'NaN' ) cmd += ' --io ' + io;
+    if( typeof io != 'NaN' ) cmd += ' --io ' + io;
 
     var vm = parseInt(req.body.vm);
-    if( typeof vm == 'NaN' ) cmd += ' --vm ' + vm;
+    if( typeof vm != 'NaN' ) cmd += ' --vm ' + vm;
 
     var vmb = parseInt(req.body.vmb);
     if( typeof vmb == 'NaN' || vmb < 0 || vmb > 1028 ) vmb = 256;
