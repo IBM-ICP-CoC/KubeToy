@@ -108,9 +108,6 @@ app.post('/stress', function(req,res){
     var vm = parseInt(req.body.vm);
     if( typeof vm != 'NaN' ) cmd += ' --vm ' + vm;
 
-    var vmb = parseInt(req.body.vmb);
-    if( typeof vmb == 'NaN' || vmb < 0 || vmb > 1028 ) vmb = 256;
-
     var vmb = req.body.vmb;
     var vals = vmb.match(/^([0-9]+)\s?([MG])$/);
     if( vals ) {
@@ -134,8 +131,6 @@ app.get('/mutate', function(req,res){
 	duckImage = "fduck.png";
 	res.redirect('home');
 });
-
-
 
 app.get('/logit', function(req,res){
 	var msg = req.query.msg;
