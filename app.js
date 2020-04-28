@@ -97,17 +97,31 @@ if( usingFilesystem() ) {
 }
 
 app.post('/stress', function(req,res){
+    var cmd = 'stress';
+
     var cpu = parseInt(req.body.cpu);
-    if( typeof cpu == 'NaN' || cpu < 0 || cpu > 16 ) cpu = 8;
+    if( typeof cpu != 'NaN' ) cmd += ' --cpu ' + cpu;
+
     var io = parseInt(req.body.io);
-    if( typeof io == 'NaN' || io < 0 || io > 8 ) io = 2;
+    if( typeof io == 'NaN' ) cmd += ' --io ' + io;
+
     var vm = parseInt(req.body.vm);
-    if( typeof vm == 'NaN' || vm < 0 || vm > 8 ) vm = 2;
+    if( typeof vm == 'NaN' ) cmd += ' --vm ' + vm;
+
     var vmb = parseInt(req.body.vmb);
-    if( typeof vmb == 'NaN' || vmb < 0 || vmb > 1028 ) vmb = 128;
-    var timeout = parseInt(req.body.timeout);
-    if( typeof timeout == 'NaN' || timeout < 1 || timeout > 120 ) timeout = 10;
-	var cmd = 'stress --cpu ' + cpu + ' --io ' + io + ' --vm ' + vm + ' --vm-bytes ' + vmb + ' --timeout ' + timeout;
+    if( typeof vmb == 'NaN' || vmb < 0 || vmb > 1028 ) vmb = 256;
+
+    var vmb = req.body.vmb;
+    var vals = vmb.match(/^([0-9]+)\s?([MG])$/);
+    if( vals ) {
+        cmd += ' --vm-bytes ' + vals[1] + vals[2];
+    }
+    var timeout = req.body.timeout;
+    var vals = timeout.match(/^([0-9]+)\s?([sm])$/);
+    if( vals ) {
+        cmd += ' --timeout ' + vals[1] + vals[2];
+    }
+    console.log(cmd);
     exec(cmd);
 	res.redirect('home');
 });
