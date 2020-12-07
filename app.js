@@ -218,6 +218,8 @@ app.post('/network',
 	function(req, res) {
         var url = req.body.url;
 
+        if( url == "" ) url = "http://google.com"; // establish a default
+
         if( validUrl.isWebUri(url) ) {
             var content = "";
             requests(url )

@@ -6,15 +6,15 @@
 		"start": "node app.js"
 	},
 	"dependencies": {
-		"body-parser": "^1.18.3",
+		"body-parser": "^1.19.0",
 		"ejs": "^2.7.4",
 		"express": "^4.17.1",
 		"formidable": "^1.2.2",
 		"node-uname": "2.0.x",
 		"requests": "^0.3.0",
 		"sprintf-js": "^1.1.2",
-        "valid-filename": "^3.1.0",
-        "valid-url": "^1.0.9"
+		"valid-filename": "^3.1.0",
+		"valid-url": "^1.0.9"
 	},
 	"repository": {}
 }
