@@ -1,6 +1,5 @@
 # KubeToy
-## v1.9.1
-### Tested with ICP versions: 3.1.0 - 3.2.0
+## v2.6.0
 
 A simple Node.js application that deploys to IBM Cloud Private.  It is used to help 
 explore the functionality of Kubernetes.  This toy application has a user interface 
@@ -14,7 +13,7 @@ which you can:
 * if Cloud Object Storage credentials are provided via ENV VAR in config maps, connect to COS bucket
 
 KubeToy can be installed via helm chart or directly with these [kubernetes definition 
-files](https://github.com/IBM-ICP-CoC/KubeToy/tree/master/deployment).  Version 1.8.0 introduces multiple architecture support (amd64, ppc64le, x390s).  Version 1.8.1 reduces the size of the images (using node:alpine). Version 1.8.2 added support for Cloud Object Storage.
+files](https://github.com/IBM-ICP-CoC/KubeToy/tree/master/deployment).  
 
 **[Adding Helm chart repository](documentation/AddHelmRepository.md)**
 Add the IBM Cloud Private Center of Competency Helm chart repository to your ICP cluster.
@@ -30,13 +29,11 @@ Intentionally crash the application and watch it self heal.
 
 **[ConfigMaps and Secrets](documentation/Config.md)** Explore configuration options for apps deployed to ICP.
 
-**[Cloud Object Storage](documentation/CloudObjectStorage.md)** Explore the easy integration of an ICP Node.js hosted application with an IBM Cloud Object Storage (COS) system located either in the IBM Public Cloud or a locally deployed IBM COS within the datacenter.
-
 **[Shared Filesystem](documentation/Filesystem.md)** Use the shared files system to store and read content across all instances of the application.  File information is persisted even if the app crashes.
 
-**[Network](documentation/Network.md)** Ping and do DNS lookups from the server side app.  You can verify visibilty of related ClusterIP services.
+**[Network](documentation/Network.md)** Allows you to request an HTTP url (from the pod), and renderes what it gets.
 
-**[Ingress](documentation/Ingress.md)** Show how you can, with the help of nginx you can set up an ingress for this app, with your own custom certs providing SSL protection.
+
 
 
 

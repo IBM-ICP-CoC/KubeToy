@@ -4,9 +4,12 @@ const validFilename = require('valid-filename');
 const fs = require('fs');
 const { exec } = require('child_process');
 const { uname } = require('node-uname');
+const requests = require('requests');
+const validUrl = require('valid-url');
+
 const sysInfo = uname();
 const sysInfoStr = `Arch: ${sysInfo.machine}, Release: ${sysInfo.release}`
-const appVersion = "2.5.0";
+const appVersion = "2.6.0";
 
 const configFile = "/var/config/config.json";
 const secretFile = "/var/secret/toy-secret.txt";
@@ -204,6 +207,38 @@ app.get('/config',
 	}
 );
 
+app.get('/network',  
+	function(req, res) {
+        var content = "";
+		res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": content  });
+	}
+);
+
+app.post('/network',  
+	function(req, res) {
+        var url = req.body.url;
+
+        if( validUrl.isWebUri(url) ) {
+            var content = "";
+            requests(url )
+            .on('data', function(chunk) {
+                content += chunk;
+            })
+            .on('end', function(err) {
+                if (err) {
+                    content = 'connection closed due to errors';
+                }
+                res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": content  });
+            });
+        } else {
+            content = "Not a valid URL: " + url;
+            res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": content  });
+        }
+
+
+	}
+);
+
 
 app.get('/home',  
 	function(req, res) {
@@ -211,6 +246,7 @@ app.get('/home',
 		res.render('home', {"pod": pod, "duckImage": duckImage, "healthStatus": status, "filesystem": usingFilesystem(), "version": appVersion, "sysInfoStr": sysInfoStr });
 	}
 );
+
 
 app.get('/version', function(req,res){
 	res.status(200).send(appVersion);
