@@ -14,7 +14,8 @@
 		"requests": "^0.3.0",
 		"sprintf-js": "^1.1.2",
 		"valid-filename": "^3.1.0",
-		"valid-url": "^1.0.9"
+        "valid-url": "^1.0.9",
+        "follow-redirects":"^1.13.0"
 	},
 	"repository": {}
 }

@@ -6,6 +6,8 @@ const { exec } = require('child_process');
 const { uname } = require('node-uname');
 const requests = require('requests');
 const validUrl = require('valid-url');
+const https = require('follow-redirects').https; 
+const http = require('follow-redirects').http; 
 
 const sysInfo = uname();
 const sysInfoStr = `Arch: ${sysInfo.machine}, Release: ${sysInfo.release}`
@@ -222,16 +224,57 @@ app.post('/network',
 
         if( validUrl.isWebUri(url) ) {
             var content = "";
-            requests(url )
-            .on('data', function(chunk) {
-                content += chunk;
-            })
-            .on('end', function(err) {
-                if (err) {
-                    content = 'connection closed due to errors';
-                }
-                res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": content  });
-            });
+
+            if( url.startsWith("https") ) {
+                const request = https.request(url, (response) => { 
+                    let data = ''; 
+                    response.on('data', (chunk) => { 
+                        data = data + chunk.toString(); 
+                    }); 
+                
+                    response.on('end', () => { 
+                        res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": data  });
+                        console.log(data); 
+                    }); 
+                }) 
+              
+                request.on('error', (error) => { 
+                    console.log('An error', error); 
+                    res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": error });
+                }); 
+                
+                request.end()  ;
+            } else {
+                const request = http.request(url, (response) => { 
+                    let data = ''; 
+                    response.on('data', (chunk) => { 
+                        data = data + chunk.toString(); 
+                    }); 
+                
+                    response.on('end', () => { 
+                        res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": data  });
+                        console.log(data); 
+                    }); 
+                }) 
+              
+                request.on('error', (error) => { 
+                    console.log('An error', error); 
+                    res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": error });
+                }); 
+
+                request.end()  ;
+            }
+
+            // requests(url )
+            // .on('data', function(chunk) {
+            //     content += chunk;
+            // })
+            // .on('end', function(err) {
+            //     if (err) {
+            //         content = 'connection closed due to errors';
+            //     }
+            //     res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": content  });
+            // });
         } else {
             content = "Not a valid URL: " + url;
             res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": content  });
