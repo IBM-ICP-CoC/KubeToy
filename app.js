@@ -26,7 +26,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
 var backgroundImage = "";
-
+var networkUrl = "https://en.wikipedia.org/wiki/Main_Page";
 
 var pod = "xxxxx";
 if( process.env.HOSTNAME ) {
@@ -214,7 +214,7 @@ app.get('/config',
 app.get('/network',  
 	function(req, res) {
         var content = "";
-		res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": content, "background": backgroundImage, "url": "http://google.com"  });
+		res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": content, "background": backgroundImage, "url": networkUrl  });
 	}
 );
 
@@ -222,9 +222,9 @@ app.post('/network',
 	function(req, res) {
         var url = req.body.url;
 
-        if( url == "" ) url = "http://google.com"; // establish a default
-
         if( validUrl.isWebUri(url) ) {
+            networkUrl = url;
+
             var content = "";
 
             if( url.startsWith("https") ) {
@@ -235,14 +235,14 @@ app.post('/network',
                     }); 
                 
                     response.on('end', () => { 
-                        res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": data, "url": url  });
+                        res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": data, "url": networkUrl  });
                         console.log(data); 
                     }); 
                 }) 
               
                 request.on('error', (error) => { 
                     console.log('An error', error); 
-                    res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": error, "url": url });
+                    res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": error, "url": networkUrl });
                 }); 
                 
                 request.end()  ;
@@ -255,26 +255,26 @@ app.post('/network',
                         }); 
                     
                         response.on('end', () => { 
-                            res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": data, "url": url  });
+                            res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": data, "url": networkUrl  });
                             console.log(data); 
                         }); 
                     }) 
                   
                     request.on('error', (error) => { 
                         console.log('An error', error); 
-                        res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": error.message, "url": url });
+                        res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": error.message, "url": networkUrl });
                     }); 
     
                     request.end()  ;
     
                 } catch( err ) {
                     console.log('An error', err );
-                    res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": error, "url": url });
+                    res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": error, "url": networkUrl });
                 }
             }
         } else {
             content = "Not a valid URL: " + url;
-            res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": content, "url": url  });
+            res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": content, "url": networkUrl  });
         }
 
 
