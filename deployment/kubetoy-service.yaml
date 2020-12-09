@@ -13,3 +13,19 @@ spec:
       name: "http"
   selector:
     app: kubetoy
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: kubetoy
+  labels:
+    app: kubetoy-app
+spec:
+  subdomain: ''
+  to:
+    kind: Service
+    name: kubetoy-service
+    weight: 100
+  port:
+    targetPort: http
+  wildcardPolicy: None

@@ -16,6 +16,12 @@ const appVersion = "2.6.1";
 const configFile = "/var/config/config.json";
 const secretFile = "/var/secret/toy-secret.txt";
 
+var stress_cpu_hogs = 2;
+var stress_io_hogs = 2;
+var stress_vm_hogs = 2;
+var stress_vm_bytes = "1G";
+var stress_timeout = "15s";
+
 var app = express();
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({
@@ -103,28 +109,43 @@ if( usingFilesystem() ) {
 	});
 }
 
+
+
 app.post('/stress', function(req,res){
     var cmd = 'stress';
 
     var cpu = parseInt(req.body.cpu);
-    if( typeof cpu != 'NaN' ) cmd += ' --cpu ' + cpu;
+    if( typeof cpu != 'NaN' && cpu > 0 ) {
+        cmd += ' --cpu ' + cpu;
+        stress_cpu_hogs = cpu;
+    }
 
     var io = parseInt(req.body.io);
-    if( typeof io != 'NaN' ) cmd += ' --io ' + io;
+    if( typeof io != 'NaN' && io > 0 ) {
+        cmd += ' --io ' + io;
+        stress_io_hogs = io;
+    }
 
     var vm = parseInt(req.body.vm);
-    if( typeof vm != 'NaN' ) cmd += ' --vm ' + vm;
+    if( typeof vm != 'NaN' && vm > 0 ) {
+        cmd += ' --vm ' + vm;
+        stress_vm_hogs = vm;
+    }
 
     var vmb = req.body.vmb;
     var vals = vmb.match(/^([0-9]+)\s?([MG])$/);
     if( vals ) {
         cmd += ' --vm-bytes ' + vals[1] + vals[2];
+        stress_vm_bytes = vals[1] + vals[2];
     }
+
     var timeout = req.body.timeout;
     var vals = timeout.match(/^([0-9]+)\s?([sm])$/);
     if( vals ) {
         cmd += ' --timeout ' + vals[1] + vals[2];
+        stress_timeout = vals[1] + vals[2];
     }
+
     console.log(cmd);
     exec(cmd);
 	res.redirect('home');
@@ -299,7 +320,12 @@ app.get('/home',
                 "healthStatus": status, 
                 "filesystem": usingFilesystem(), 
                 "version": appVersion, 
-                "sysInfoStr": sysInfoStr 
+                "sysInfoStr": sysInfoStr,
+                "stress_cpu": stress_cpu_hogs,
+                "stress_io": stress_io_hogs,
+                "stress_vm": stress_vm_hogs,
+                "stress_vm_bytes": stress_vm_bytes,
+                "stress_timeout": stress_timeout
             });
 	}
 );
