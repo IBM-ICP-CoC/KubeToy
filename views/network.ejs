@@ -30,7 +30,7 @@
 	<form method="POST" action="network">
 	  <div class="form-group">
 	    <label for="url">URL</label>
-	    <input type="text" class="form-control" name="url" id="url" aria-describedby="urlHelp" placeholder="https://google.com">
+	    <input type="text" class="form-control" name="url" id="url" aria-describedby="urlHelp" value="<%= url %>">
 	    <small id="filenameHelp" class="form-text text-muted">Enter in a URL (internal kubernentes or external) for this pod to obtain and render as HTML below.</small>
 	  </div>
 	  <button type="submit" class="btn btn-primary">Load</button>

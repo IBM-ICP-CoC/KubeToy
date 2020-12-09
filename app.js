@@ -25,6 +25,8 @@ app.use(bodyParser.urlencoded({
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
+var backgroundImage = "bridge";
+
 
 var pod = "xxxxx";
 if( process.env.HOSTNAME ) {
@@ -212,7 +214,7 @@ app.get('/config',
 app.get('/network',  
 	function(req, res) {
         var content = "";
-		res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": content  });
+		res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": content, "url": "http://google.com"  });
 	}
 );
 
@@ -226,58 +228,53 @@ app.post('/network',
             var content = "";
 
             if( url.startsWith("https") ) {
-                const request = https.request(url, (response) => { 
+                const request = https.request(url, { "server.timeout": 30000 }, (response) => { 
                     let data = ''; 
                     response.on('data', (chunk) => { 
                         data = data + chunk.toString(); 
                     }); 
                 
                     response.on('end', () => { 
-                        res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": data  });
+                        res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": data, "url": url  });
                         console.log(data); 
                     }); 
                 }) 
               
                 request.on('error', (error) => { 
                     console.log('An error', error); 
-                    res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": error });
+                    res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": error, "url": url });
                 }); 
                 
                 request.end()  ;
             } else {
-                const request = http.request(url, (response) => { 
-                    let data = ''; 
-                    response.on('data', (chunk) => { 
-                        data = data + chunk.toString(); 
+                try{
+                    const request = http.request(url, { "server.timeout": 30000 }, (response) => { 
+                        let data = ''; 
+                        response.on('data', (chunk) => { 
+                            data = data + chunk.toString(); 
+                        }); 
+                    
+                        response.on('end', () => { 
+                            res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": data, "url": url  });
+                            console.log(data); 
+                        }); 
+                    }) 
+                  
+                    request.on('error', (error) => { 
+                        console.log('An error', error); 
+                        res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": error.message, "url": url });
                     }); 
-                
-                    response.on('end', () => { 
-                        res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": data  });
-                        console.log(data); 
-                    }); 
-                }) 
-              
-                request.on('error', (error) => { 
-                    console.log('An error', error); 
-                    res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": error });
-                }); 
-
-                request.end()  ;
+    
+                    request.end()  ;
+    
+                } catch( err ) {
+                    console.log('An error', err );
+                    res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": error, "url": url });
+                }
             }
-
-            // requests(url )
-            // .on('data', function(chunk) {
-            //     content += chunk;
-            // })
-            // .on('end', function(err) {
-            //     if (err) {
-            //         content = 'connection closed due to errors';
-            //     }
-            //     res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": content  });
-            // });
         } else {
             content = "Not a valid URL: " + url;
-            res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": content  });
+            res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": content, "url": url  });
         }
 
 
@@ -287,8 +284,23 @@ app.post('/network',
 
 app.get('/home',  
 	function(req, res) {
+        var background = req.query.background;
+        if( background == "none" ) {
+            backgroundImage = "";
+        } else {
+            backgroundImage = background;
+        }
 		var status = healthStatus();
-		res.render('home', {"pod": pod, "duckImage": duckImage, "healthStatus": status, "filesystem": usingFilesystem(), "version": appVersion, "sysInfoStr": sysInfoStr });
+        res.render('home', 
+            { 
+                "pod": pod, 
+                "duckImage": duckImage, 
+                "background": backgroundImage,
+                "healthStatus": status, 
+                "filesystem": usingFilesystem(), 
+                "version": appVersion, 
+                "sysInfoStr": sysInfoStr 
+            });
 	}
 );
 
