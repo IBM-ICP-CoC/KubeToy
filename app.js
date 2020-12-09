@@ -25,7 +25,7 @@ app.use(bodyParser.urlencoded({
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
-var backgroundImage = "bridge";
+var backgroundImage = "";
 
 
 var pod = "xxxxx";
