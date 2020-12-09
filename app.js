@@ -11,7 +11,7 @@ const http = require('follow-redirects').http;
 
 const sysInfo = uname();
 const sysInfoStr = `Arch: ${sysInfo.machine}, Release: ${sysInfo.release}`
-const appVersion = "2.6.0";
+const appVersion = "2.6.1";
 
 const configFile = "/var/config/config.json";
 const secretFile = "/var/secret/toy-secret.txt";
@@ -59,12 +59,12 @@ if( usingFilesystem() ) {
 			if( err ) {
 				var pretty = JSON.stringify(err,null,4);
 				  console.error(pretty);
-				  res.render('error', { "pod": pod, "filesystem": usingFilesystem(), "msg": pretty, "objectstore": objectstore });
+				  res.render('error', { "pod": pod, "filesystem": usingFilesystem(), "msg": pretty, "background": backgroundImage, "objectstore": objectstore });
 			} else {
 				if( !items ) {
 					items = [];
 				}
-				res.render('files', { "pod": pod, "items": items, "filesystem": usingFilesystem(), "directory": directory, "objectstore": objectstore });
+				res.render('files', { "pod": pod, "items": items, "filesystem": usingFilesystem(), "directory": directory, "background": backgroundImage, "objectstore": objectstore });
 			}
 		});
 	});
@@ -90,7 +90,7 @@ if( usingFilesystem() ) {
 				  if (err) {
 					  var pretty = JSON.stringify(err,null,4);
 					  console.error(pretty);
-					  res.render('error', { "pod": pod, "filesystem": usingFilesystem(), "msg": pretty, "objectstore": objectstore });
+					  res.render('error', { "pod": pod, "filesystem": usingFilesystem(), "msg": pretty, "background": backgroundImage, "objectstore": objectstore });
 				  } else{
 					  res.redirect('files');
 				  }
@@ -98,7 +98,7 @@ if( usingFilesystem() ) {
 		} else {
 			var pretty ='Invalid filename: "' + filename + '"';
 			console.error(pretty);
-			res.render('error', { "pod": pod, "filesystem": usingFilesystem(), "msg": pretty, "objectstore": objectstore });
+			res.render('error', { "pod": pod, "filesystem": usingFilesystem(), "msg": pretty, "background": backgroundImage, "objectstore": objectstore });
 		}
 	});
 }
@@ -207,14 +207,14 @@ app.get('/config',
 		}
 		var prettyEnv = JSON.stringify(process.env,null,4);
 		
-		res.render('config', {"pod": pod, "pretty": prettyEnv, "filesystem": usingFilesystem(), "config": config, "secret": secret });
+		res.render('config', {"pod": pod, "pretty": prettyEnv, "filesystem": usingFilesystem(), "config": config, "background": backgroundImage, "secret": secret });
 	}
 );
 
 app.get('/network',  
 	function(req, res) {
         var content = "";
-		res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": content, "url": "http://google.com"  });
+		res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": content, "background": backgroundImage, "url": "http://google.com"  });
 	}
 );
 
@@ -235,14 +235,14 @@ app.post('/network',
                     }); 
                 
                     response.on('end', () => { 
-                        res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": data, "url": url  });
+                        res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": data, "url": url  });
                         console.log(data); 
                     }); 
                 }) 
               
                 request.on('error', (error) => { 
                     console.log('An error', error); 
-                    res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": error, "url": url });
+                    res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": error, "url": url });
                 }); 
                 
                 request.end()  ;
@@ -255,26 +255,26 @@ app.post('/network',
                         }); 
                     
                         response.on('end', () => { 
-                            res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": data, "url": url  });
+                            res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": data, "url": url  });
                             console.log(data); 
                         }); 
                     }) 
                   
                     request.on('error', (error) => { 
                         console.log('An error', error); 
-                        res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": error.message, "url": url });
+                        res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": error.message, "url": url });
                     }); 
     
                     request.end()  ;
     
                 } catch( err ) {
                     console.log('An error', err );
-                    res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": error, "url": url });
+                    res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": error, "url": url });
                 }
             }
         } else {
             content = "Not a valid URL: " + url;
-            res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "content": content, "url": url  });
+            res.render('network', {"pod": pod, "filesystem": usingFilesystem(), "background": backgroundImage, "content": content, "url": url  });
         }
 
 
@@ -287,7 +287,7 @@ app.get('/home',
         var background = req.query.background;
         if( background == "none" ) {
             backgroundImage = "";
-        } else {
+        } else if( typeof background != "undefined" ) {
             backgroundImage = background;
         }
 		var status = healthStatus();

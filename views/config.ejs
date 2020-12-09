@@ -26,10 +26,21 @@
             result.value = data;
         }
     </script>
+    <style>
+        <% if( typeof background !== 'undefined' ) { %>
+            body {
+                background-image: url('images/<%= background %>.png');
+            }
+            .transparent {
+                background:#7f7f7f;
+                background:rgba(255,255,255,0.5);
+            }
+        <% } %>
+    </style> 
 </head>
 
 <body>
-<div class="container">
+<div class="container transparent">
 
 <h1>ConfigMaps and Secrets</h1>
 <h6>Pod: <%= pod %></h6>
