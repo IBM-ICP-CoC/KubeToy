@@ -65,12 +65,12 @@ if( usingFilesystem() ) {
 			if( err ) {
 				var pretty = JSON.stringify(err,null,4);
 				  console.error(pretty);
-				  res.render('error', { "pod": pod, "filesystem": usingFilesystem(), "msg": pretty, "background": backgroundImage, "objectstore": objectstore });
+				  res.render('error', { "pod": pod, "filesystem": usingFilesystem(), "msg": pretty, "background": backgroundImage });
 			} else {
 				if( !items ) {
 					items = [];
 				}
-				res.render('files', { "pod": pod, "items": items, "filesystem": usingFilesystem(), "directory": directory, "background": backgroundImage, "objectstore": objectstore });
+				res.render('files', { "pod": pod, "items": items, "filesystem": usingFilesystem(), "directory": directory, "background": backgroundImage });
 			}
 		});
 	});
@@ -96,7 +96,7 @@ if( usingFilesystem() ) {
 				  if (err) {
 					  var pretty = JSON.stringify(err,null,4);
 					  console.error(pretty);
-					  res.render('error', { "pod": pod, "filesystem": usingFilesystem(), "msg": pretty, "background": backgroundImage, "objectstore": objectstore });
+					  res.render('error', { "pod": pod, "filesystem": usingFilesystem(), "msg": pretty, "background": backgroundImage });
 				  } else{
 					  res.redirect('files');
 				  }
@@ -104,7 +104,7 @@ if( usingFilesystem() ) {
 		} else {
 			var pretty ='Invalid filename: "' + filename + '"';
 			console.error(pretty);
-			res.render('error', { "pod": pod, "filesystem": usingFilesystem(), "msg": pretty, "background": backgroundImage, "objectstore": objectstore });
+			res.render('error', { "pod": pod, "filesystem": usingFilesystem(), "msg": pretty, "background": backgroundImage });
 		}
 	});
 }
