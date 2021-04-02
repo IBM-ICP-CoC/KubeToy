@@ -39,9 +39,10 @@ var networkUrl = "https://en.wikipedia.org/wiki/Main_Page";
 
 var pod = "xxxxx";
 if( process.env.HOSTNAME ) {
-	var hostname = process.env.HOSTNAME;
-	index = hostname.lastIndexOf('-');
-	pod = hostname.substring(index+1);
+	// var hostname = process.env.HOSTNAME;
+	// index = hostname.lastIndexOf('-');
+	// pod = hostname.substring(index+1);
+    pod = process.env.HOSTNAME;
 } 
 
 var healthy = true;
@@ -340,7 +341,6 @@ app.get('/home',
                 "healthStatus": status, 
                 "filesystem": usingFilesystem(), 
                 "version": appVersion, 
-                "sysInfoStr": sysInfoStr,
                 "stress_cpu": stress_cpu_hogs,
                 "stress_io": stress_io_hogs,
                 "stress_vm": stress_vm_hogs,
@@ -352,8 +352,8 @@ app.get('/home',
 );
 
 
-const sysInfo = uname();
-const sysInfoStr = `Arch: ${sysInfo.machine}, Release: ${sysInfo.release}`
+// const sysInfo = uname();
+// const sysInfoStr = `Arch: ${sysInfo.machine}, Release: ${sysInfo.release}`
 const package = require('./package.json');
 const appName = package.name;
 const appVersion = package.version;
@@ -369,7 +369,7 @@ app.get('/',
 	}
 );
 
-console.log(sysInfoStr);
+// console.log(sysInfoStr);
 
 app.listen(app.get('port'), '0.0.0.0', function() {
 	console.log(`Starting ${appName} v${appVersion} on port ${port}. Pod: ${pod}.`);
