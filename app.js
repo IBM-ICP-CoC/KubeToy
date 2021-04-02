@@ -1,30 +1,33 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const validFilename = require('valid-filename');
 const fs = require('fs');
 const { exec } = require('child_process');
 const { uname } = require('node-uname');
-const requests = require('requests');
+// const requests = require('requests');
 const validUrl = require('valid-url');
 const https = require('follow-redirects').https; 
 const http = require('follow-redirects').http; 
 
-const sysInfo = uname();
-const sysInfoStr = `Arch: ${sysInfo.machine}, Release: ${sysInfo.release}`
-const appVersion = "2.6.1";
+require('@instana/collector')({
+    autoProfile: true
+});
+
 
 const configFile = "/var/config/config.json";
 const secretFile = "/var/secret/toy-secret.txt";
 
-var stress_cpu_hogs = 2;
-var stress_io_hogs = 2;
-var stress_vm_hogs = 2;
+var stress_cpu_hogs = 1;
+var stress_io_hogs = 1;
+var stress_vm_hogs = 1;
 var stress_vm_bytes = "1G";
 var stress_timeout = "15s";
 
+var stressing = false;
+
 var app = express();
 app.use(express.static(__dirname + '/public'));
-app.use(bodyParser.urlencoded({
+app.use(express.urlencoded({
     extended: true
 }));
 
@@ -110,46 +113,63 @@ if( usingFilesystem() ) {
 }
 
 
+app.get('/stress', function(req,res){
+    var status = { "stressing": stressing };
+    res.json( status );
+});
 
 app.post('/stress', function(req,res){
-    var cmd = 'stress';
 
-    var cpu = parseInt(req.body.cpu);
-    if( typeof cpu != 'NaN' && cpu > 0 ) {
-        cmd += ' --cpu ' + cpu;
-        stress_cpu_hogs = cpu;
+    if( ! stressing ) {
+        var cmd = 'stress';
+
+        var cpu = parseInt(req.body.cpu);
+        if( typeof cpu != 'NaN' && cpu > 0 ) {
+            cmd += ' --cpu ' + cpu;
+            stress_cpu_hogs = cpu;
+        }
+    
+        var io = parseInt(req.body.io);
+        if( typeof io != 'NaN' && io > 0 ) {
+            cmd += ' --io ' + io;
+            stress_io_hogs = io;
+        }
+    
+        var vm = parseInt(req.body.vm);
+        if( typeof vm != 'NaN' && vm > 0 ) {
+            cmd += ' --vm ' + vm;
+            stress_vm_hogs = vm;
+        }
+    
+        var vmb = req.body.vmb;
+        var vals = vmb.match(/^([0-9]+)\s?([MG])$/);
+        if( vals ) {
+            cmd += ' --vm-bytes ' + vals[1] + vals[2];
+            stress_vm_bytes = vals[1] + vals[2];
+        }
+    
+        var timeout = req.body.timeout;
+        if( typeof timeout != 'NaN' && timeout > 0 ) {
+            cmd += ' --timeout ' + timeout + 's';
+            stress_timeout = timeout;
+        }
+    
+        console.log(cmd);
+        exec(cmd);
+        duckImage = "stress-duck.png";
+        stressing = true;
+        setTimeout(destress, timout*1000);
+
     }
 
-    var io = parseInt(req.body.io);
-    if( typeof io != 'NaN' && io > 0 ) {
-        cmd += ' --io ' + io;
-        stress_io_hogs = io;
-    }
-
-    var vm = parseInt(req.body.vm);
-    if( typeof vm != 'NaN' && vm > 0 ) {
-        cmd += ' --vm ' + vm;
-        stress_vm_hogs = vm;
-    }
-
-    var vmb = req.body.vmb;
-    var vals = vmb.match(/^([0-9]+)\s?([MG])$/);
-    if( vals ) {
-        cmd += ' --vm-bytes ' + vals[1] + vals[2];
-        stress_vm_bytes = vals[1] + vals[2];
-    }
-
-    var timeout = req.body.timeout;
-    var vals = timeout.match(/^([0-9]+)\s?([sm])$/);
-    if( vals ) {
-        cmd += ' --timeout ' + vals[1] + vals[2];
-        stress_timeout = vals[1] + vals[2];
-    }
-
-    console.log(cmd);
-    exec(cmd);
-	res.redirect('home');
+    var status = { "stressing": stressing };
+    res.json( status );
 });
+
+function destress(){
+    duckImage = "duck.png";
+    stressing = false;
+}
 
 app.get('/mutate', function(req,res){
 	console.log("mutating");
@@ -325,11 +345,19 @@ app.get('/home',
                 "stress_io": stress_io_hogs,
                 "stress_vm": stress_vm_hogs,
                 "stress_vm_bytes": stress_vm_bytes,
-                "stress_timeout": stress_timeout
+                "stress_timeout": stress_timeout,
+                "stressing": stressing
             });
 	}
 );
 
+
+const sysInfo = uname();
+const sysInfoStr = `Arch: ${sysInfo.machine}, Release: ${sysInfo.release}`
+const package = require('./package.json');
+const appName = package.name;
+const appVersion = package.version;
+const port = app.get('port');
 
 app.get('/version', function(req,res){
 	res.status(200).send(appVersion);
@@ -341,13 +369,13 @@ app.get('/',
 	}
 );
 
-console.log(`Version: ${appVersion}` );
 console.log(sysInfoStr);
 
-
 app.listen(app.get('port'), '0.0.0.0', function() {
-	  console.log(pod + ": server starting on port " + app.get('port'));
+	console.log(`Starting ${appName} v${appVersion} on port ${port}. Pod: ${pod}.`);
 });
+
+
 
 
 

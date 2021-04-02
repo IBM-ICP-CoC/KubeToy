@@ -96,30 +96,30 @@
                     <div class="form-row">
                         <div class="form-group col-md-3">
                             <label for="cpu">CPU workers</label>
-                            <input type="text" class="form-control" name="cpu" id="cpu" value="<%= stress_vm %>">
+                            <input id="stressCpu" type="text" class="form-control" name="cpu" id="cpu" value="<%= stress_vm %>">
                         </div>
                         <div class="form-group col-md-3">
                             <label for="io">IO workers</label>
-                            <input type="text" class="form-control" name="io" id="io" value="<%= stress_io %>">
+                            <input id="stressIo" type="text" class="form-control" name="io" id="io" value="<%= stress_io %>">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-3">
                             <label for="vm">VM workers</label>
-                            <input type="text" class="form-control" name="vm" id="vm" value="<%= stress_vm %>">
+                            <input id="stressVm" type="text" class="form-control" name="vm" id="vm" value="<%= stress_vm %>">
                         </div>
                         <div class="form-group col-md-4">
                             <label for="vmb">VM Bytes</label>
-                            <input type="text" class="form-control" name="vmb" id="vmb" value="<%= stress_vm_bytes %>">
+                            <input id="stressVmBytes" type="text" class="form-control" name="vmb" id="vmb" value="<%= stress_vm_bytes %>">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-4">
                             <label for="timeout">Timeout</label>
-                            <input type="text" class="form-control" name="timeout" id="timeout" value="<%= stress_timeout %>">
+                            <input id="stressTimeOut" type="text" class="form-control" name="timeout" id="timeout" value="<%= stress_timeout %>">
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Stress Test</button>
+                    <button id="btnStress" class="btn btn-primary">Stress Test</button>
                 </form>
         
             </div>
@@ -144,6 +144,49 @@
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+
+    <script>
+
+var stressStatusChecker = null;
+
+        function stress(){
+            var data = {
+                "cpu": $('#stressCpu').val,
+                "io": $('#stressIo').val,
+                "vm": $('#stressVm').val,
+                "vmb": $('#stressVmBytes').val,
+                "timeout": $('#stressTimeout').val
+            };
+            $.post('/stress', data, function(response) {
+                updateStress(data);
+            }, 'json');
+
+        }
+
+        function updateStress(data){
+            if( data.status == "stressing" ){
+                    if( stressStatusChecker == null ) {
+                        stressStatusChecker = setInterval(checkStress, 1000);
+                    }
+                    $('#btnStress').prop('disabled', false);
+                } else {
+                    stressStatusChecker = null;
+                    $('#btnStress').prop('disabled', false);
+                }
+        }
+
+        function checkStress(){
+            $.getJSON('/stress', function(data){
+                updateStress(data);
+            });
+        }
+
+        function destress(){
+
+        }
+
+
+    </script>
     
 </body>
 </html>
