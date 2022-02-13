@@ -12,7 +12,7 @@
 		"sprintf-js": "^1.1.2",
 		"valid-filename": "^3.1.0",
 		"valid-url": "^1.0.9",
-		"follow-redirects": "^1.13.3",
+		"follow-redirects": "^1.14.8",
 		"@instana/collector": "1.118.0"
 	},
 	"repository": {}
