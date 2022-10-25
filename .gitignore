@@ -43,3 +43,6 @@ typings/
 .fusebox/
 .dynamodb/
 .idea/
+Dockerfile
+.dockerignore
+*.bu*

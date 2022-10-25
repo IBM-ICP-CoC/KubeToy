@@ -8,8 +8,8 @@ const path = require('path');
 const fs = require('fs');
 const http = require('http');
 const dns = require('dns');
-const appVersion = '1.4.0';
-
+const AWS = require('aws-sdk');
+const appVersion = '1.5.0';
 
 /*
   CONFIGURE APPLICATION
@@ -48,6 +48,9 @@ if (!path.isAbsolute(directory)) { directory = path.resolve(__dirname, directory
 // Pod name
 let pod = process.env.HOSTNAME || 'Unknown pod';
 
+//Namespace
+let ns = process.env.NAMESPACE;
+
 // Booleans
 let healthy = true;
 let hasFilesystem = fs.existsSync(directory);
@@ -63,7 +66,7 @@ app.locals.appVersion = appVersion;
 app.locals.hasFilesystem = hasFilesystem;
 app.locals.hasSecret = hasSecret;
 app.locals.hasConfigMap = hasConfigMap;
-
+app.locals.isAWS = undefined; //use this for automated checking
 
 /*
   DEBUGGING URLS
@@ -78,7 +81,6 @@ app.get('/error', function(request, response) {
   response.render('error');
 });
 
-
 /*
   HOME URLS/FUNCTIONS
  */
@@ -92,6 +94,10 @@ app.get('/home', function(request, response) {
   response.render('home', {'healthStatus': status});
 });
 
+
+/*
+  OTHER URLS/FUNCTIONS
+ */
 app.get('/health', function(request, response) {
   if( healthy ) {
     response.status(200);
@@ -256,9 +262,118 @@ if (hasConfigMap) {
   ENVIRONMENT VARIABLES URLS/FUNCTIONS
  */
 app.get('/env-variables', function(request, response) {
-  response.render('env-variables', {'envVariables': JSON.stringify(process.env,null,4)});
+  //redact AWS IAM ARN account numbers and role name
+  let envdata = JSON.stringify(process.env,null,4);
+  let envvar = envdata.replace(/\d{9}:role\/.*/,'*********:role/<redacted>\"\,');
+
+  response.render('env-variables', {'envVariables': envvar});
 });
 
+/*
+  AWS CONTROLLER FOR KUBERNETES
+
+  There are 3 capabilities below:
+  1. Show the contents of the bucket (which is of a predetermined syntax of "<namespace>-bucket")
+  2. Get the contents of a specific object (file) in the bucket
+  3. Create a new object(file) in the bucket
+
+  For Authentication (taken from: https://aws-controllers-k8s.github.io/community/docs/user-docs/authentication/#background)
+  ------------
+  When initiating communication with an AWS service API, the ACK controller creates a new aws-sdk-go Session object. This Session
+  object is automatically configured during construction by code in the aws-sdk-go library that looks for credential information
+  in the following places, in this specific order:
+
+  1. If the AWS_PROFILE environment variable is set, find that specified profile in the configured credentials file and use that profile’s credentials.
+  2. If the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables are both set, these values are used by aws-sdk-go to set the AWS credentials.
+  3. If the AWS_WEB_IDENTITY_TOKEN_FILE environment variable is set, `aws-sdk-go` will load the credentials from the JSON web token (JWT) present in the file
+    pointed to by this environment variable. Note that this environment variable is set to the value `/var/run/secrets/eks.amazonaws.com/serviceaccount/token`
+    by the IAM Roles for Service Accounts (IRSA) pod identity webhook and the contents of this file are automatically rotated by the webhook with temporary credentials.
+  4. If there is a credentials file present at the location specified in the AWS_SHARED_CREDENTIALS_FILE environment variable (or $HOME/.aws/credentials if empty),
+    `aws-sdk-go` will load the “default” profile present in the credentials file.
+*/
+
+//returns the object keys (names) that are in the bucket
+app.get('/ack', function(request, response) {
+  if (!app.locals.isAWS) {
+    console.error("ACK can only be accessed on AWS.");
+    response.render('error', {'msg': 'In order to use the ACK this must be run on AWS.'});
+  } else {
+    // Create S3 service object
+    s3 = new AWS.S3({apiVersion: '2006-03-01'});
+
+    var bucketParams = {
+      Bucket : ns + "-bucket",  //the bucket name will be "<namespace>-bucket"
+      MaxKeys: 10
+    };
+
+    s3.listObjects(bucketParams, function(err, data){
+      if (err) {
+        console.error(err + "\nAttepting access to bucket: " + ns + "-bucket");
+        response.render('error', {'msg': JSON.stringify(err, null, 4) + "\nAttepting access to bucket: " + ns + "-bucket"});
+      } else {
+        response.render('ack', {'s3Objects': data.Contents, 'bucketname': data.Name});
+      }
+    });
+  }
+});
+
+//Get the selected object from the S3 bucket and render to the browser
+app.get('/getFile', function(request, response) {
+  if (!app.locals.isAWS) {
+    console.error("ACK can only be accessed on AWS.");
+    response.render('error', {'msg': 'In order to use the ACK this must be run on AWS.'});
+  } else {
+
+    let filename = request.query.filename;
+
+    //Create S3 service object
+    s3 = new AWS.S3({apiVersion: '2006-03-01'});
+
+    var bucketParams = {
+      Bucket : ns + "-bucket",  //the bucket name will be "<namespace>-bucket"
+      Key: filename
+    };
+
+    s3.getObject(bucketParams, function(err, data){
+      if (err) {
+        console.error(err);
+        response.render('error', {'msg': JSON.stringify(err, null, 4)});
+      } else {
+        response.render('s3viewfile', {'filename': filename, 'content': data.Body});
+      }
+    });
+  }
+});
+
+//create an object in the s3 bucket
+app.post('/s3upload', function(request, response) {
+  if (!app.locals.isAWS) {
+    console.error("ACK can only be accessed on AWS.");
+    response.render('error', {'msg': 'Wrong cloud platform. In order to use the ACK this must be run on AWS.'});
+  } else {
+    let filename = request.body.filename;
+    let content = request.body.content;
+
+    // Create S3 service object
+    s3 = new AWS.S3({apiVersion: '2006-03-01'});
+
+    var bucketParams = {
+      Bucket : ns + "-bucket",  //the bucket name will be "<namespace>-bucket"
+      Body: content,
+      Key: filename,
+      ContentType: 'text/plain'
+    };
+
+    s3.putObject(bucketParams, function(err, data) {
+      if (err) {
+        console.error(err);
+        response.render('error', {'msg': JSON.stringify(err, null, 4)});
+      } else {
+        response.redirect('/ack');
+      }
+    });
+  }
+});
 
 /*
   Horizontal Pod Autoscaler URLS/FUNCTIONS.
@@ -268,15 +383,14 @@ app.get('/autoscaling', function(request, response) {
   response.render('autoscaling');
 });
 
-
 app.get('/hpa', function(request, response) {
-    let options = {
-        host: serviceIP,
-        port: servicePort,
-        path: '/hpa',
-        method: 'GET'
-      },
-      errMessage = 'microservice endpoint not available';
+  let options = {
+      host: serviceIP,
+      port: servicePort,
+      path: '/hpa',
+      method: 'GET'
+    },
+    errMessage = 'microservice endpoint not available';
 
   http.request(options, function(httpResponse) {
       return;
@@ -284,7 +398,7 @@ app.get('/hpa', function(request, response) {
     console.error(errMessage);
     response.json(errMessage);
   }).end();
-  
+
   response.writeHead(200);
   response.end('done');
 });
@@ -343,12 +457,10 @@ function processDNS(hostname, response) {
       for (let i = 0; i < addresses.length; i++) {
         addrList += addresses[i] + '\n';
       }
-
       response.render('network', {'dnsResponse': addrList, 'dnsHost': hostname});
     }
   });
 }
-
 
 /*
   ABOUT URLS/FUNCTIONS
@@ -362,6 +474,30 @@ app.get('/about', function(request, response) {
   START SERVER
  */
 console.log(`Version: ${appVersion}` );
+
+//the first time the app is run this will be set to false thus requiring a check
+//of if the app can access the S3 bucket
+if (app.locals.isAWS === undefined){
+  // Create S3 service object
+  s3 = new AWS.S3({apiVersion: '2006-03-01'});
+
+  var bucketParams = {
+    Bucket : ns + "-bucket",  //the bucket name will be "<namespace>-bucket"
+  };
+
+  s3.headBucket(bucketParams, function(err,data){
+    if (err) { //there was some error in accessing the bucket, or it does not exist -> don't show ACK menu item
+      let msg = "If this is not running on AWS and/or you have no intention of using the ACK please ignore. \n" +
+                   " - Error in accessing the " + ns + "-bucket, or it does not exist. \n" +
+                   " - ACK feature disabled";
+      console.log(msg);
+      app.locals.isAWS = false;
+    } else { //show the ack feature
+      console.log("Bucket accessible, enabling ACK feature.");
+      app.locals.isAWS = true;
+    }
+  });
+}
 
 app.listen(app.get('port'), '0.0.0.0', function() {
   console.log(pod + ': server starting on port ' + app.get('port'));

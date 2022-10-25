@@ -5,36 +5,35 @@
 <div class="blank-slate-pf container-pf-nav-pf-vertical">
 	<h1>
 		<span class="fa fa-cubes small"></span>
-		Autoscaling
+		Horizontal Pod Autoscaling
 	</h1>
 
 	<div class="row">
-		<p class="col-lg-6 mb-5">
+		<p class="col-lg-9 mb-5">
 			OpenShift being Kubernetes can automatically scale up the number of pods in order to handle
 			an increase in traffic or workload by utilizing the
-			<a href="https://docs.openshift.com/dedicated/4/nodes/pods/nodes-pods-autoscaling.html" target="_blank">
+			<a href="https://docs.openshift.com/container-platform/latest/nodes/pods/nodes-pods-autoscaling.html" target="_blank">
 				Horizontal Pod Autoscaler <span class="fa fa-external-link-alt small"></span>
-			</a>. Autoscaling can be set by CPU utilization or Memory utilization.
+			</a> (HPA). Autoscaling can be set by CPU utilization or memory utilization.
 		</p>
 	</div>
 
 	<div class="row row-cards-pf">
-		<div class="col-lg-6 microservice hide">
+		<div class="col-lg-9 microservice hide">
 			<div class="card-pf card-pf-view">
 				<div class="card-pf-body">
 					<div class="row">
 						<div class="col-xs-7">
 							<h2 class="card-pf-title mb-3">
 								<!--<span class="fa fa-satellite-dish"></span>-->
-								AutoScaling
+								Pod AutoScaling
 							</h2>
 							<p>
 								As was in the Networking section this list of <em>Remote Pods</em> increases or decreases dynamically based on the number
-								of microservice Pods running. You can
-								<a onclick="createLoad()" href="javascript:void(0);">
-									increase the load </a>
+								of microservice Pods running. You can increase the load
 								 (please click only once) on the microservice and watch how the number of pods scale up here. The number of pods can also be seen from the CLI or within the web console.
 							</p>
+							<button class="btn btn-primary btn-sm" onclick="createLoad();">Increase the load</button>
 						</div>
 						<div class="col-xs-5">
 							<h2 class="card-pf-title mb-3">
@@ -65,9 +64,9 @@ function createLoad() {
 	} else {
 		window.my_time_loop += 1;
 	}
-	
+
 	$.get('/hpa');
-	
+
 	if (window.my_time_loop == 15) {
 		return;
 	} else {
